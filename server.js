@@ -9,9 +9,11 @@ const methodOverride = require('method-override');
 // Express configuration
 const app = express();
 const port = process.env.PORT || 8080;
-const api = require('./routes/api.js');
+const userRoutes = require('./routes/user_routes.js');
 app.use(bodyParser.urlencoded({extended: false}));
-app.use("/", api);
+app.use(bodyParser.json());
+app.use(methodOverride("_method"));
+app.use("/", userRoutes);
 
 // Mongoose configuration
 mongoose.connect(`mongodb://localhost/exchange`, {useMongoClient: true});
