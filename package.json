@@ -1,0 +1,27 @@
+{
+  "name": "MockExchange",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/burningserenity/MockExchange.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/burningserenity/MockExchange/issues"
+  },
+  "homepage": "https://github.com/burningserenity/MockExchange#readme",
+  "dependencies": {
+    "ccxt": "^1.10.686",
+    "crypto-tickers": "^1.0.0",
+    "express": "^4.16.2",
+    "method-override": "^2.3.10",
+    "mongoose": "^4.13.9"
+  }
+}
