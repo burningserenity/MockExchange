@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"nodemon ./server.js\" \"cd ./client && npm start\""
   },
   "repository": {
     "type": "git",
@@ -18,10 +19,9 @@
   },
   "homepage": "https://github.com/burningserenity/MockExchange#readme",
   "dependencies": {
-    "ccxt": "^1.10.686",
-    "crypto-tickers": "^1.0.0",
+    "bignumber.js": "^5.0.0",
+    "cryptocompare": "^0.4.0",
     "express": "^4.16.2",
-    "method-override": "^2.3.10",
     "mongoose": "^4.13.9"
   }
 }

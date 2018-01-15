@@ -16,7 +16,8 @@ const UserSchema = new Schema({
   usd_balance: {
     type: Number,
     required: true,
-    default: 100000.00
+    default: 100000.00,
+    min: 0
   },
   btc_balance: {
     type: Number,
@@ -33,7 +34,15 @@ const UserSchema = new Schema({
     required: true,
     default: 0
   },
+  doge_balance: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   trades: {
+    type: Array
+  },
+  closed_trades: {
     type: Array
   }
 });

@@ -2,22 +2,43 @@
 
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const User = require('../models/User');
+
+// Cryptocurrency exchange API, requires fetch defined globally
+global.fetch = require('node-fetch');
+const cc = require('cryptocompare');
+
+// For dealing with decimals outside Node's precision capabilities
+const BigNumber = require('bignumber.js');
+BigNumber.config({
+  ROUNDING_MODE: 8,
+  EXPONENTIAL_AT: 20
+});
 
 // I like to see what's happening in the node console
 const resolution = function (res, object) {
-  JSON.stringify(object, null, 2);
+  console.log(JSON.stringify(object, null, 2));
   res.json(object);
 }
 
-// Get one or all registered users by _id
-router.get("/api/users/:id?", (req, res) => {
-  if (req.params.id !== undefined) {
-    User.findOne({"_id": req.params.id}).then(dbUser => {
+// Get one or all registered users by query
+router.get("/api/users", (req, res) => {
+  // By _id
+  if (req.query.id) {
+    User.findOne({"_id": req.query.id}).then(dbUser => {
       resolution(res, dbUser);
     });
   }
 
+  // By user_name
+  else if (req.query.user_name) {
+    User.findOne({"user_name": req.query.user_name}).then(dbUser => {
+      resolution(res, dbUser);
+    });
+  }
+
+  // Get all users
   else {
     User.find().then(dbUser => {
       resolution(res, dbUser);
@@ -34,19 +55,35 @@ router.post("/api/users", (req, res) => {
 
 // Trade
 router.put("/api/users/:id", (req, res) => {
+  // Set currencies involved in trade
   const buy = `${req.body.buying}_balance`;
   const sell = `${req.body.selling}_balance`;
-  console.log(`buy: ${buy}\nsell: ${sell}`);
-  User.updateOne({
+  User.findOneAndUpdate({
     "_id": req.params.id
   }, {
     $inc: {
       [buy]: req.body.buyAmount,
-      [sell]: req.body.sellAmount
+      [sell]: (req.body.sellAmount * -1)
+    }, 
+    $push: {
+      "trades" : {
+        "curr_bought": req.body.buying,
+        "bought_amount": req.body.buyAmount,
+        "curr_sold": req.body.selling,
+        "sold_amount": req.body.sellAmount,
+        "timestamp": moment().toISOString()
+      }
     }
   }, (err, doc) => {
     if (err) return res.send(500, {error: err});
     return res.json(doc);
+  });
+});
+
+// Delete a user
+router.delete("/api/users/:id", (req, res) => {
+  User.deleteOne({"_id": req.params.id}).then(dbUser => {
+    resolution(res, dbUser);
   });
 });
 
