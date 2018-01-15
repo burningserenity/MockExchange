@@ -5,6 +5,8 @@ import { FormBtn, Input } from "../../components/Form/";
 import API from "../../utils/API";
 import Pages from "../../utils/Pages";
 
+// Component which sets trade orders
+
 class PlaceOrder extends Component {
   state = {
     currency: "",
@@ -12,8 +14,13 @@ class PlaceOrder extends Component {
     sellCurrency: "",
     amount: "",
     offer: "",
+    usdAmount: "",
+    usdOffer: "",
     selling: false
   };
+
+  // Method for trading between cryptocurrencies
+  // Checks if buying or selling and modifies the state accordingly
 
   cryptoOnlyOrder = () => {
     if (this.state.selling === "true") {
@@ -42,22 +49,25 @@ class PlaceOrder extends Component {
           <Col size="md-3">
             <h4>Buy/Sell BTC with USD</h4>
             <h5>Amount</h5>
-            <Input onChange={Pages.handleChange.bind(this)} id="amount" name="buy_btc" />
+            <Input onChange={Pages.handleChange.bind(this)} id="usdAmount" name="buy_btc" />
             <h5>Offer</h5>
-            <Input onChange={Pages.handleChange.bind(this)} id="offer" name="buy_btc" />
+            <Input onChange={Pages.handleChange.bind(this)} id="usdOffer" name="buy_btc" />
             <ListGroup>
               <Radio name="CUR" onChange={Pages.handleChange.bind(this)} id="buyCurrency" value="btc">Buy BTC with USD</Radio>
               <Radio name="CUR" onChange={Pages.handleChange.bind(this)} id="buyCurrency" value="usd">Sell BTC for USD</Radio>
             </ListGroup>
           <FormBtn onClick={() => { 
+
+            {/* In line function for trading with USD */}
+
             if (this.state.buyCurrency === 'btc') {
               this.setState({sellCurrency: 'usd'}, () => { 
-                API.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer).then(() => window.location.href = `/exchange/${this.props.match.params.id}`); 
+                API.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer).then(() => window.location.href = `/exchange/${this.props.match.params.id}`); 
               });
             }
             else if (this.state.buyCurrency === 'usd') {
               this.setState({sellCurrency: 'btc'}, () => {
-                API.placeOrder(this.props.match.params.id, this.state.buyCurrency, 'btc', this.state.amount, this.state.offer); 
+                API.placeOrder(this.props.match.params.id, this.state.buyCurrency, 'btc', this.state.usdAmount, this.state.usdOffer).then(() => window.location.href = `/exchange/${this.props.match.params.id}`); 
               });
             }
           }}/>
@@ -78,7 +88,6 @@ class PlaceOrder extends Component {
               value={this.state.amount}
               onChange={Pages.handleChange.bind(this)}
               id="amount"
-              name="amount"
             />
           </Col>
           <Col size="md-3">
@@ -87,7 +96,6 @@ class PlaceOrder extends Component {
               value={this.state.offer}
               onChange={Pages.handleChange.bind(this)}
               id="offer"
-              name="offer"
             />
           </Col>
           <Col size="md-3">

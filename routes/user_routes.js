@@ -9,13 +9,6 @@ const User = require('../models/User');
 global.fetch = require('node-fetch');
 const cc = require('cryptocompare');
 
-// For dealing with decimals outside Node's precision capabilities
-const BigNumber = require('bignumber.js');
-BigNumber.config({
-  ROUNDING_MODE: 8,
-  EXPONENTIAL_AT: 20
-});
-
 // I like to see what's happening in the node console
 const resolution = function (res, object) {
   console.log(JSON.stringify(object, null, 2));
@@ -53,7 +46,7 @@ router.post("/api/users", (req, res) => {
   });
 });
 
-// Trade
+// Order -- Instant as of right now, intended to make pending orders
 router.put("/api/users/:id", (req, res) => {
   // Set currencies involved in trade
   const buy = `${req.body.buying}_balance`;

@@ -6,8 +6,12 @@ import { Col, Row, Container } from "../../components/Grid/";
 import axios from 'axios';
 import Pages from "../../utils/Pages";
 
+// Create new user
+
 class Registration extends Component {
   state = {user_name: ""};
+
+  // Handles user creation and redirects the new user to the main page
 
   handleFormSubmit = e => {
     e.preventDefault();

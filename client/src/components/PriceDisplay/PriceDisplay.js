@@ -2,6 +2,8 @@ import React from 'react';
 import { Input, Jumbotron, JumboBtn } from "../../components/Jumbotron/";
 import { Col, Row, Container } from "../../components/Grid/";
 
+// Shows current prices for each currency
+
 export const PriceDisplay = props => 
   <Container>
     <Row>

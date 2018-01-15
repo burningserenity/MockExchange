@@ -4,9 +4,13 @@ import { Col, Row, Container } from "../../components/Grid/";
 import axios from 'axios';
 import Pages from "../../utils/Pages";
 
+// Login and landing page
+
 class Login extends Component {
 
   state = {user_name: ""};
+
+  // Mocks log in by getting user by name and returning the user's _id
 
   handleFormSubmit = e => {
     e.preventDefault();

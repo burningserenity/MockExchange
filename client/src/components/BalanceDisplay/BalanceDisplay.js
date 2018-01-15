@@ -2,6 +2,8 @@ import React from 'react';
 import { Input, Jumbotron, JumboBtn } from "../../components/Jumbotron/";
 import { Col, Row, Container } from "../../components/Grid/";
 
+// Shows logged in user's available balances in each currency
+
 export const BalanceDisplay = props =>
   <Container>
     <Row>

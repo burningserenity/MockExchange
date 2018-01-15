@@ -8,6 +8,8 @@ import { BalanceDisplay } from "../../components/BalanceDisplay/BalanceDisplay";
 import { OpenTrades } from "../../components/OpenTrades/OpenTrades";
 import PlaceOrder from "../../components/PlaceOrder/PlaceOrder";
 
+// The page with all the action
+
 class MockExchange extends Component {
   state = {
     btcTousd: 0,
@@ -23,6 +25,9 @@ class MockExchange extends Component {
 
     trades: []
   };
+
+  // Loads current prices, gets user _id from route parameter and
+  // Reloads the prices every three seconds.
 
   componentDidMount() {
     this.loadPrices();

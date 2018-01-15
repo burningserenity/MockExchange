@@ -10,6 +10,7 @@ global.fetch = require('node-fetch');
 const cc = require('cryptocompare');
 
 // For dealing with decimals outside Node's precision capabilities
+// As of 1-15-18, this is for making the DOGE/BTC conversion rate readable
 const BigNumber = require('bignumber.js');
 BigNumber.config({
   ROUNDING_MODE: 8,
