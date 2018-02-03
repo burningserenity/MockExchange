@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const moment = require('moment');
 const User = require('../models/User');
+const Trade = require('../models/Trade');
 
 // Cryptocurrency exchange API, requires fetch defined globally
 global.fetch = require('node-fetch');
@@ -42,7 +43,7 @@ router.get("/api/users", (req, res) => {
 // Add a user
 router.post("/api/users", (req, res) => {
   User.create({"user_name": req.body.user_name}).then(dbUser => {
-      resolution(res, dbUser);
+    resolution(res, dbUser);
   });
 });
 
@@ -51,25 +52,32 @@ router.put("/api/users/:id", (req, res) => {
   // Set currencies involved in trade
   const buy = `${req.body.buying}_balance`;
   const sell = `${req.body.selling}_balance`;
-  User.findOneAndUpdate({
-    "_id": req.params.id
-  }, {
-    $inc: {
-      [buy]: req.body.buyAmount,
-      [sell]: (req.body.sellAmount * -1)
-    }, 
-    $push: {
-      "trades" : {
-        "curr_bought": req.body.buying,
-        "bought_amount": req.body.buyAmount,
-        "curr_sold": req.body.selling,
-        "sold_amount": req.body.sellAmount,
-        "timestamp": moment().toISOString()
-      }
-    }
-  }, (err, doc) => {
-    if (err) return res.send(500, {error: err});
-    return res.json(doc);
+  User.findById(req.params.id, (err, doc) => {
+    if (err) return res.status(500).send({error: err});
+    Trade.create({
+      "curr_bought": req.body.buying,
+      "curr_sold": req.body.selling,
+      "bought_amount": req.body.buyAmount,
+      "sold_amount": req.body.sellAmount,
+      "owner": req.params.id
+    }).then(trade => {
+      console.log(trade);
+      if (err) return res.status(500).send({error: err});
+      doc.update({
+        $set: {
+          [buy]: doc[buy] + parseFloat(req.body.buyAmount),
+          [sell]: doc[sell] - parseFloat(req.body.sellAmount)
+        },
+        $push: {
+          "trades" : trade
+        }
+      }, {
+        runValidators: true
+      }, (err, doc) => {
+        if (err) return res.status(500).send({error: err});
+        return res.json(doc);
+      });
+    });
   });
 });
 
