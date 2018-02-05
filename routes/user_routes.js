@@ -88,5 +88,18 @@ router.delete("/api/users/:id", (req, res) => {
   });
 });
 
+// Delete a trade
+router.delete("/api/users/:id/:trade", (req, res) => {
+  Trade.deleteOne({"_id": req.params.trade}).then(() => {
+    return User.updateOne({"_id": req.params.id},{
+      $pull: {
+        'trades': req.params.trade
+      }
+    });
+  }).then(dbUser => {
+    resolution(res, dbUser);
+  });
+});
+
 module.exports = router;
 

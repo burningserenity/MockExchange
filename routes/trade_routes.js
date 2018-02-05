@@ -14,26 +14,22 @@ const resolution = function (res, object) {
 }
 
 router.get("/api/trades", (req, res) => {
-  // By _id
-  if (req.query.id) {
-    Trade.findOne({"_id": req.query.id}).then(dbTrade => {
-      resolution(res, dbTrade);
-    });
-  }
 
-  // By owner's _id
-  else if (req.query.owner) {
-    Trade.find({"owner": req.query.owner}).then(dbTrade => {
-      resolution(res, dbTrade);
-    });
-  }
+  // Find trades based on query parameters
+  // Must be _id, owner, curr_bought, and/or curr_sold
 
-  // All trades
-  else {
-    Trade.find().then(dbTrade => {
-      resolution(res, dbTrade);
-    });
-  }
+  let query = Object.keys(req.query).reduce((mappedQuery, key) => {
+    let param = req.query[key]
+    console.log(`param = ${param}`);
+
+    if (param) mappedQuery[key] = param
+
+    return mappedQuery
+  }, {});
+
+  Trade.find(query).then(dbTrade => {
+    resolution(res, dbTrade);
+  });
 });
 
 module.exports = router;
