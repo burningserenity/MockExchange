@@ -106,6 +106,9 @@ router.delete("/api/users/:id/:trade", (req, res) => {
         }
       });
     });
+  }).catch(err => {
+    console.log(err);
+    res.send(err);
   }).then(dbTransaction => {
     resolution(res, dbTransaction);
   });
