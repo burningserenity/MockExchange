@@ -90,14 +90,24 @@ router.delete("/api/users/:id", (req, res) => {
 
 // Delete a trade
 router.delete("/api/users/:id/:trade", (req, res) => {
-  Trade.deleteOne({"_id": req.params.trade}).then(() => {
-    return User.updateOne({"_id": req.params.id},{
-      $pull: {
-        'trades': req.params.trade
-      }
+  Trade.findOneAndRemove({"_id": req.params.trade}).then(dbTrade => {
+    const curr_bought = `${dbTrade.curr_bought}_balance`;
+    const curr_sold = `${dbTrade.curr_sold}_balance`;
+    const bought_amount = dbTrade.bought_amount;
+    const sold_amount = dbTrade.sold_amount;
+    return User.findOne({"_id": req.params.id}).then(dbUser => {
+      return dbUser.update({
+        $pull: {
+          'trades': req.params.trade
+        },
+        $set: {
+          [curr_sold]: dbUser[curr_sold] + parseFloat(sold_amount),
+          [curr_bought]: dbUser[curr_bought] - parseFloat(bought_amount)
+        }
+      });
     });
-  }).then(dbUser => {
-    resolution(res, dbUser);
+  }).then(dbTransaction => {
+    resolution(res, dbTransaction);
   });
 });
 
