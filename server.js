@@ -17,7 +17,7 @@ app.use("/", userRoutes, curRoutes, tradeRoutes);
 
 // Mongoose configuration
 mongoose.connect(`mongodb://localhost/exchange`, {useMongoClient: true});
-mongoose.Promise = global.Promise;
+mongoose.Promise = Promise;
 mongoose.connection.on('error', (err) => {
     console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
 });
