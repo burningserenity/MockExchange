@@ -20,7 +20,7 @@ const resolution = function (res, object) {
 router.get("/api/users", (req, res) => {
   // By _id
   if (req.query.id) {
-    User.findOne({"_id": req.query.id}).then(dbUser => {
+    User.findOne({"_id": req.query.id}).populate('trades').then(dbUser => {
       resolution(res, dbUser);
     });
   }

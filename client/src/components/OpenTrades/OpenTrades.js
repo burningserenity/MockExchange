@@ -27,7 +27,7 @@ export const OpenTrades = props =>
           <Row>
             <Col size="md-12">
               <h5>Timestamp</h5>
-              <h6>{order.timestamp}</h6>
+              <h6>{order.order_timestamp}</h6>
             </Col>
           </Row>
           <JumboBtn>Cancel</JumboBtn>

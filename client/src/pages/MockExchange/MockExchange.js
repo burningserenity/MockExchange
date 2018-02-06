@@ -68,7 +68,7 @@ class MockExchange extends Component {
         eth_balance: res.data.eth_balance,
         doge_balance: res.data.doge_balance,
 
-        trades: res.data.trades
+        trades: res.data.trades.filter(trade => trade.open)
       });
     });
   };
