@@ -29,30 +29,34 @@ async function getAllPrices() {
   let p;
   let prices = [];
   const rates = [{buy: 'btc',sell: 'usd'}, {buy: 'ltc',sell: 'btc'}, {buy: 'eth',sell: 'btc'}, {buy: 'doge',sell: 'btc'}];
-  const currencies = ['btc', 'ltc', 'eth', 'doge', 'usd'];
+  const currencies = ['btc', 'ltc', 'eth', 'doge'];
   rates.forEach(rate => {
     p = axios.get(`http://127.0.0.1:8080/api/currencies/${rate.buy}/${rate.sell}`);
     prices.push(p);
   });
-  let pricesArr = await Promise.all(prices);
+  let promArr = await Promise.all(prices);
+  let pricesArr = promArr.map(index => {
+    return index.data
+  });
   trades.find().then(dbTrades => {
     const openTrades = dbTrades.filter(trade => trade.open);
     openTrades.forEach(trade => {
-      currencies.forEach(currency => {
-        if (trade.curr_bought === currency && trade.sold_amount >= pricesArr.indexOf(currency)) {
-          console.log(`${trade.owner} bought ${currency}`);
-          const balance = `${currency}_balance`;
+      for (let i = 0; i < currencies.length; i++) {
+        if (trade.curr_bought === currencies[i] && trade.sold_amount >= (pricesArr[i] * trade.bought_amount)) {
+          console.log(`${trade.owner} bought ${currencies[i]}`);
+          const balance = `${currencies[i]}_balance`;
           trade.update({$set: { "open": false }}).then(() => {
             users.findOne({"_id": trade.owner}).then(user => {
+          console.log(`user[balance] === ${user[balance]}\ntrade.bought_amount === ${trade.bought_amount}\ntotal === ${user[balance] + parseFloat(trade.bought_amount)}`);
               user.update({
                 $set: {
                   [balance]: user[balance] + parseFloat(trade.bought_amount)
                 }
               }).then(transaction => console.log(JSON.stringify(transaction, null, 2)));
-            });          
+            });
           });
         }
-      });
+      }
     });
   });
   /*

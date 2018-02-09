@@ -65,7 +65,6 @@ router.put("/api/users/:id", (req, res) => {
       if (err) return res.status(500).send({error: err});
       doc.update({
         $set: {
-          [buy]: doc[buy] + parseFloat(req.body.buyAmount),
           [sell]: doc[sell] - parseFloat(req.body.sellAmount)
         },
         $push: {
