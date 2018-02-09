@@ -1,5 +1,7 @@
 'use strict'
 
+// CRUD Routes for users
+
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
@@ -84,32 +86,6 @@ router.put("/api/users/:id", (req, res) => {
 router.delete("/api/users/:id", (req, res) => {
   User.deleteOne({"_id": req.params.id}).then(dbUser => {
     resolution(res, dbUser);
-  });
-});
-
-// Delete a trade
-router.delete("/api/users/:id/:trade", (req, res) => {
-  Trade.findOneAndRemove({"_id": req.params.trade}).then(dbTrade => {
-    const curr_bought = `${dbTrade.curr_bought}_balance`;
-    const curr_sold = `${dbTrade.curr_sold}_balance`;
-    const bought_amount = dbTrade.bought_amount;
-    const sold_amount = dbTrade.sold_amount;
-    return User.findOne({"_id": req.params.id}).then(dbUser => {
-      return dbUser.update({
-        $pull: {
-          'trades': req.params.trade
-        },
-        $set: {
-          [curr_sold]: dbUser[curr_sold] + parseFloat(sold_amount),
-          [curr_bought]: dbUser[curr_bought] - parseFloat(bought_amount)
-        }
-      });
-    });
-  }).catch(err => {
-    console.log(err);
-    res.send(err);
-  }).then(dbTransaction => {
-    resolution(res, dbTransaction);
   });
 });
 
