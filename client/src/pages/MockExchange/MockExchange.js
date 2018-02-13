@@ -11,6 +11,8 @@ import PlaceOrder from "../../components/PlaceOrder/PlaceOrder";
 // The page with all the action
 
 class MockExchange extends Component {
+
+
   state = {
     btcTousd: 0,
     ltcTobtc: 0,
@@ -29,11 +31,11 @@ class MockExchange extends Component {
   // Loads current prices, gets user _id from route parameter and
   // Reloads the prices every three seconds.
 
-  componentDidMount() {
-    this.loadPrices();
-    this.loadUserData(this.props.match.params.id);
-    setInterval(this.loadPrices, 3000);
-  };
+    componentDidMount() {
+      this.loadPrices();
+      this.loadUserData(this.props.match.params.id);
+      setInterval(this.loadPrices, 3000);
+    };
 
   loadPrices = () => {
     // Get promise for VWAP of each currency
@@ -73,6 +75,11 @@ class MockExchange extends Component {
     });
   };
 
+  cancelOrder = (owner, trade) => {
+    API.cancelOrder(owner, trade);
+    this.loadUserData(this.props.match.params.id);
+  }
+
   render() {
     return (
       <Container>
@@ -90,7 +97,7 @@ class MockExchange extends Component {
         </Row>
         <Row>
           <h1>Open Trade Orders</h1>
-          <OpenTrades trades={this.state.trades} />
+          <OpenTrades trades={this.state.trades} cancelOrder={this.cancelOrder} />
         </Row>
       </Container>
     )
