@@ -13,6 +13,13 @@ export default {
       sellAmount: sellAmount
     });
   },
+
+  // Helper function to cancel and delete an open order
+  
+  cancelOrder: function(user, trade) {
+    return axios.delete(`/api/trades/${user}/${trade}`);
+  },
+
   // Helper function to hit API route for CryptoCompare
   
   getAllPrices: async function() {

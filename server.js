@@ -24,11 +24,11 @@ mongoose.connection.on('error', (err) => {
 });
 
 function hitPoll() {
-  axios.post(`http://127.0.0.1:${port}/api/trades`);
+  axios.post(`http://127.0.0.1:${port}/api/trades`).catch(() => 0);
 }
 
 // Server connection
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
-  setInterval(hitPoll, 3000);
+  setInterval(hitPoll, 1500);
 });

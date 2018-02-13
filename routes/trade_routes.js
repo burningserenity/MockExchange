@@ -27,11 +27,14 @@ async function poll() {
   const currencies = ['btc', 'ltc', 'eth', 'doge'];
 
   rates.forEach(rate => {
-    p = axios.get(`http://127.0.0.1:${port}/api/currencies/${rate.buy}/${rate.sell}`);
+    p = axios.request({
+      url: `http://127.0.0.1:${port}/api/currencies/${rate.buy}/${rate.sell}`,
+      timeout: 3000
+    }).catch(err => console.log(err));
     prices.push(p);
   });
 
-  let promArr = await Promise.all(prices);
+  let promArr = await Promise.all(prices).catch(err => console.log(err));
   let pricesArr = promArr.map(index => {
     return index.data
   });
@@ -70,8 +73,10 @@ function executeTrade(pricesArr, trade, currency) {
         $set: {
           [balance]: user[balance] + parseFloat(trade.bought_amount)
         }
-      }).then(console.log('traded'));
-    });
+      }).then(() => {
+        console.log('traded')
+      }).catch(err => console.log(err));
+    }).catch(err => console.log(err));
   });
 };
 
@@ -86,7 +91,7 @@ router.get("/api/trades", (req, res) => {
 
 // Route for poll function, see above
 router.post("/api/trades", (req, res) => {
-  poll();
+  poll().catch(err => console.log(err));
 });
 
 // Delete a trade
