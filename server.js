@@ -24,11 +24,14 @@ mongoose.connection.on('error', (err) => {
 });
 
 function hitPoll() {
+  // Throw errors away and try again
   axios.post(`http://127.0.0.1:${port}/api/trades`).catch(() => 0);
 }
 
 // Server connection
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
+  // Query API twice as often as client side
+  // This is to compensate for persistent error with every other attempt to call hitPoll
   setInterval(hitPoll, 1500);
 });

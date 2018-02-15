@@ -12,7 +12,6 @@ import PlaceOrder from "../../components/PlaceOrder/PlaceOrder";
 
 class MockExchange extends Component {
 
-
   state = {
     btcTousd: 0,
     ltcTobtc: 0,
@@ -76,9 +75,14 @@ class MockExchange extends Component {
   };
 
   cancelOrder = (owner, trade) => {
-    API.cancelOrder(owner, trade);
-    this.loadUserData(this.props.match.params.id);
-  }
+    API.cancelOrder(owner, trade).then(() =>
+      this.loadUserData(this.props.match.params.id))
+  };
+
+  placeOrder = (owner, buying, selling, buyAmount, sellAmount) => {
+    API.placeOrder(owner, buying, selling, buyAmount, sellAmount).then(() =>
+      this.loadUserData(this.props.match.params.id))
+  };
 
   render() {
     return (
@@ -93,7 +97,7 @@ class MockExchange extends Component {
         </Row>
         <Row>
           <h1>Place an order</h1>
-          <PlaceOrder match={this.props.match}/>
+          <PlaceOrder match={this.props.match} placeOrder={this.placeOrder} />
         </Row>
         <Row>
           <h1>Open Trade Orders</h1>
