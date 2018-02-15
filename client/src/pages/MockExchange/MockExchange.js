@@ -3,6 +3,7 @@ import { Col, Row, Container } from "../../components/Grid/";
 import API from "../../utils/API";
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { BigNumber } from 'bignumber.js';
 import { PriceDisplay } from "../../components/PriceDisplay/PriceDisplay";
 import { BalanceDisplay } from "../../components/BalanceDisplay/BalanceDisplay";
 import { OpenTrades } from "../../components/OpenTrades/OpenTrades";
@@ -12,7 +13,10 @@ import PlaceOrder from "../../components/PlaceOrder/PlaceOrder";
 
 class MockExchange extends Component {
 
-  state = {
+  constructor(props) {
+    super();
+
+  this.state = {
     btcTousd: 0,
     ltcTobtc: 0,
     ethTobtc: 0,
@@ -26,6 +30,11 @@ class MockExchange extends Component {
 
     trades: []
   };
+BigNumber.config({
+  ROUNDING_MODE: 8,
+  EXPONENTIAL_AT: 20
+});
+}
 
   // Loads current prices, gets user _id from route parameter and
   // Reloads the prices every three seconds.
@@ -35,6 +44,7 @@ class MockExchange extends Component {
       this.loadUserData(this.props.match.params.id);
       setInterval(this.loadPrices, 3000);
     };
+
 
   loadPrices = () => {
     // Get promise for VWAP of each currency
@@ -62,14 +72,20 @@ class MockExchange extends Component {
 
     // Resolve logged in user's currency balances to the state
     dbUser.then(res => {
+      const openTrades = res.data.trades.filter(trade => trade.open);
+      const displayTrades = openTrades.map(trade => {
+        trade.bought_amount = BigNumber(trade.bought_amount).toString();
+        trade.sold_amount = BigNumber(trade.sold_amount).toString();
+        return trade;
+      });
       this.setState({
-        usd_balance: res.data.usd_balance,
-        btc_balance: res.data.btc_balance,
-        ltc_balance: res.data.ltc_balance,
-        eth_balance: res.data.eth_balance,
-        doge_balance: res.data.doge_balance,
+        usd_balance: BigNumber(res.data.usd_balance).toString(),
+        btc_balance: BigNumber(res.data.btc_balance).toString(),
+        ltc_balance: BigNumber(res.data.ltc_balance).toString(),
+        eth_balance: BigNumber(res.data.eth_balance).toString(),
+        doge_balance: BigNumber(res.data.doge_balance).toString(),
 
-        trades: res.data.trades.filter(trade => trade.open)
+        trades: displayTrades
       });
     });
   };
