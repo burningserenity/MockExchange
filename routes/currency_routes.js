@@ -14,7 +14,8 @@ const cc = require('cryptocompare');
 const BigNumber = require('bignumber.js');
 BigNumber.config({
   ROUNDING_MODE: 8,
-  EXPONENTIAL_AT: 20
+  EXPONENTIAL_AT: 20,
+  POW_PRECISION: 1e+9
 });
 
 router.get('/api/currencies/:buy/:sell', (req, res) => {

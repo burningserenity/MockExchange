@@ -20,15 +20,14 @@ class PlaceOrder extends Component {
     selling: false
   };
 
-  orderValidation (currency) {
+  orderValidation (currency, price) {
+    console.log(currency);
     if (currency === 'usd') {
-      return currency.match(/^[0-9]*([\.]{1}[0-9]{2})|[0-9]+$/g);
+      return price.match(/^(\$?\d{1,3}(?:,?\d{3})*(?:\.\d{2})?|\.\d{2})?$/g);
     }
-    else if (currency === 'btc' || 'ltc' || 'doge') {
-      return currency.match(/^[0-9]*([\.][0-9]{0,8})|[0-9]+$/g);
-    }
-    else if (currency === 'eth') {
-      return currency.match(/^[0-9]*([\.][0-9]{0,18})|[0-9]+$/g);
+
+    else if (currency === 'btc' || currency === 'ltc' || currency === 'eth' || currency === 'doge') {
+      return price.match(/^(\d{1,3}(?:,?\d{3})*(?:\.\d{0,8})?|\.\d{0,8})?$/g);
     }
   };
 
@@ -41,7 +40,11 @@ class PlaceOrder extends Component {
         sellCurrency: this.state.currency,
         buyCurrency: 'btc'
       }, () => {
-        this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
+        const val1 = this.orderValidation(this.state.buyCurrency, this.state.amount);
+        const val2 = this.orderValidation(this.state.sellCurrency, this.state.offer);
+        console.log(`buying ${this.state.amount} btc, selling ${this.state.offer} ${this.state.sellCurrency}\nval1 = ${val1}\nval2 = ${val2}`)
+        if (val1 != null && val2 != null)
+          this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
       });
     }
 
@@ -50,7 +53,11 @@ class PlaceOrder extends Component {
         buyCurrency: this.state.currency,
         sellCurrency: 'btc'
       }, () => {
-        this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
+        const val1 = this.orderValidation(this.state.buyCurrency, this.state.amount);
+        const val2 = this.orderValidation(this.state.sellCurrency, this.state.offer);
+        console.log(`selling ${this.state.offer} btc, buying ${this.state.amount} ${this.state.buyCurrency}\nval1 = ${val1}\nval2 = ${val2}`)
+        if (val1 != null && val2 != null)
+          this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
       });
     }
   };
@@ -60,17 +67,20 @@ class PlaceOrder extends Component {
 
   usdOrder = props => {
     if (this.state.buyCurrency === 'btc') {
-      let foo = this.orderValidation(this.state.usdOffer);
-      console.log(Object.keys(this.state).find(key => this.state[key] === 'btc'));
       this.setState({sellCurrency: 'usd'}, () => { 
-        this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
+        const val1 = this.orderValidation(this.state.buyCurrency, this.state.usdAmount);
+        const val2 = this.orderValidation(this.state.sellCurrency, this.state.usdOffer);
+        if (val1 != null && val2 != null)
+          this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
       });
     }
 
     else if (this.state.buyCurrency === 'usd') {
       this.setState({sellCurrency: 'btc'}, () => {
-      console.log(Object.keys(this.state).find(key => this.state[key] === 'btc'));
-        this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
+        const val1 = this.orderValidation(this.state.buyCurrency, this.state.usdAmount);
+        const val2 = this.orderValidation(this.state.sellCurrency, this.state.usdOffer);
+        if (val1 != null && val2 != null)
+          this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
       });
     }
   };

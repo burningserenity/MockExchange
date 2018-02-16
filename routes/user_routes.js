@@ -66,7 +66,7 @@ router.put("/api/users/:id", (req, res) => {
       console.log(trade);
       doc.update({
         $set: {
-          [sell]: doc[sell] - parseFloat(req.body.sellAmount)
+          [sell]: (doc[sell] - parseFloat(req.body.sellAmount)).toPrecision(8)
         },
         $push: {
           "trades" : trade
