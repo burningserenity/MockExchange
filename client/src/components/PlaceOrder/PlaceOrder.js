@@ -20,6 +20,18 @@ class PlaceOrder extends Component {
     selling: false
   };
 
+  orderValidation (currency) {
+    if (currency === 'usd') {
+      return currency.match(/^[0-9]*([\.]{1}[0-9]{2})|[0-9]+$/g);
+    }
+    else if (currency === 'btc' || 'ltc' || 'doge') {
+      return currency.match(/^[0-9]*([\.][0-9]{0,8})|[0-9]+$/g);
+    }
+    else if (currency === 'eth') {
+      return currency.match(/^[0-9]*([\.][0-9]{0,18})|[0-9]+$/g);
+    }
+  };
+
   // Method for trading between cryptocurrencies
   // Checks if buying or selling and modifies the state accordingly
 
@@ -48,6 +60,8 @@ class PlaceOrder extends Component {
 
   usdOrder = props => {
     if (this.state.buyCurrency === 'btc') {
+      let foo = this.orderValidation(this.state.usdOffer);
+      console.log(Object.keys(this.state).find(key => this.state[key] === 'btc'));
       this.setState({sellCurrency: 'usd'}, () => { 
         this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
       });
@@ -55,7 +69,8 @@ class PlaceOrder extends Component {
 
     else if (this.state.buyCurrency === 'usd') {
       this.setState({sellCurrency: 'btc'}, () => {
-        this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, 'btc', this.state.usdAmount, this.state.usdOffer); 
+      console.log(Object.keys(this.state).find(key => this.state[key] === 'btc'));
+        this.props.placeOrder(this.props.match.params.id, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
       });
     }
   };

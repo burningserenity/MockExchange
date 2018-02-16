@@ -54,8 +54,8 @@ router.put("/api/users/:id", (req, res) => {
   // Set currencies involved in trade
   const buy = `${req.body.buying}_balance`;
   const sell = `${req.body.selling}_balance`;
-  User.findById(req.params.id, (err, doc) => {
-    if (err) return res.status(500).send({error: err});
+  User.findById(req.params.id).then(doc => {
+    if (doc[sell] < req.body.sellAmount) res.status(403).send({error: 'Insufficient funds'});
     Trade.create({
       "curr_bought": req.body.buying,
       "curr_sold": req.body.selling,
@@ -64,7 +64,6 @@ router.put("/api/users/:id", (req, res) => {
       "owner": req.params.id
     }).then(trade => {
       console.log(trade);
-      if (err) return res.status(500).send({error: err});
       doc.update({
         $set: {
           [sell]: doc[sell] - parseFloat(req.body.sellAmount)
@@ -75,11 +74,13 @@ router.put("/api/users/:id", (req, res) => {
       }, {
         runValidators: true
       }, (err, doc) => {
-        if (err) return res.status(500).send({error: err});
-        return res.json(doc);
+        if (err) {
+          trade.remove();
+        }
+        else return res.json(doc);
       });
     });
-  });
+  }).catch(err => res.status(403).send({error: 'Forbidden'}));
 });
 
 // Delete a user
