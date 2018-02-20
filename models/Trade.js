@@ -3,6 +3,7 @@
 // Initialize Mongoose
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+mongoose.Promise = Promise;
 
 // Incorporate users model to ensure ownership
 const User = require("./User");
