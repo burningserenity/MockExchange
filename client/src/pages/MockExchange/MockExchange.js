@@ -42,8 +42,9 @@ BigNumber.config({
 
     componentDidMount() {
       this.loadPrices();
-      this.loadUserData(this.props.match.params.id);
-      setInterval(this.loadPrices, 3000);
+      this.loadUserData();
+       setInterval(this.loadPrices, 3000);
+      setInterval(() => { this.loadUserData(this.props.match.params.id) }, 3000);
     };
 
 
@@ -67,9 +68,9 @@ BigNumber.config({
     });
   };
 
-  loadUserData(id) {
+  loadUserData() {
     // Get promise from Mongoose
-    const dbUser = API.getUserData(id);
+    const dbUser = API.getUserData(this.props.match.params.id);
 
     // Resolve logged in user's currency balances to the state
     dbUser.then(res => {
