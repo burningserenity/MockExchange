@@ -13,7 +13,7 @@ const testTrade = new Trade;
 const testUser = new User;
 
 // Check Trade properties
-describe('Models', () => {
+describe('Trade', () => {
   it('Trade has fields: curr_bought, curr_sold, bought_amount, sold_amount, open, owner.', () => {
     expect(testTrade).to.have.a.property('curr_bought');
     expect(testTrade).to.have.a.property('curr_sold');
@@ -29,5 +29,21 @@ describe('Models', () => {
 
   it('Trade.owner is an array for a reference to a user, with no default value', () => {
     expect(testTrade.owner).to.be.an('array').that.is.empty;
+  });
+});
+
+describe('User', () => {
+  it('User has fields: user_name, usd_balance, btc_balance, ltc_balance, eth_balance, doge_balance, trades', () => {
+    expect(testUser).to.have.a.property('user_name');
+    expect(testUser).to.have.a.property('usd_balance');
+    expect(testUser).to.have.a.property('btc_balance');
+    expect(testUser).to.have.a.property('ltc_balance');
+    expect(testUser).to.have.a.property('eth_balance');
+    expect(testUser).to.have.a.property('doge_balance');
+    expect(testUser).to.have.a.property('trades');
+  });
+
+  it('User.trades is an array for a reference to trades, with no default value', () => {
+    expect(testUser.trades).to.be.an('array').that.is.empty;
   });
 });
