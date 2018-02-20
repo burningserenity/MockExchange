@@ -14,13 +14,12 @@ const testUser = new User;
 
 // Check Trade properties
 describe('Trade', () => {
+  const tradeProps = ['curr_bought', 'curr_sold', 'bought_amount', 'sold_amount', 'open', 'owner'];
   it('Trade has fields: curr_bought, curr_sold, bought_amount, sold_amount, open, owner.', () => {
-    expect(testTrade).to.have.a.property('curr_bought');
-    expect(testTrade).to.have.a.property('curr_sold');
-    expect(testTrade).to.have.a.property('bought_amount');
-    expect(testTrade).to.have.a.property('sold_amount');
-    expect(testTrade).to.have.a.property('open');
-    expect(testTrade).to.have.a.property('owner');
+    tradeProps.forEach((trade, i) => {
+      expect(testTrade).to.have.a.property(tradeProps[i]);
+      i++;
+    });
   });
 
   it('Trade.open is true when instantiated', () => {
@@ -33,14 +32,12 @@ describe('Trade', () => {
 });
 
 describe('User', () => {
+  const userProps = ['user_name', 'usd_balance', 'ltc_balance', 'eth_balance', 'doge_balance', 'trades'];
   it('User has fields: user_name, usd_balance, btc_balance, ltc_balance, eth_balance, doge_balance, trades', () => {
-    expect(testUser).to.have.a.property('user_name');
-    expect(testUser).to.have.a.property('usd_balance');
-    expect(testUser).to.have.a.property('btc_balance');
-    expect(testUser).to.have.a.property('ltc_balance');
-    expect(testUser).to.have.a.property('eth_balance');
-    expect(testUser).to.have.a.property('doge_balance');
-    expect(testUser).to.have.a.property('trades');
+    userProps.forEach((user, i) => {
+      expect(testUser).to.have.a.property(userProps[i]);
+      i++;
+    });
   });
 
   it('User.trades is an array for a reference to trades, with no default value', () => {
