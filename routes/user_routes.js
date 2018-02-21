@@ -49,7 +49,7 @@ router.post("/api/users", (req, res) => {
   });
 });
 
-// Order -- Instant as of right now, intended to make pending orders
+// Order -- make a pending order
 router.put("/api/users/:id", (req, res) => {
   // Set currencies involved in trade
   const buy = `${req.body.buying}_balance`;
