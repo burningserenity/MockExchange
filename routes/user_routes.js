@@ -49,40 +49,6 @@ router.post("/api/users", (req, res) => {
   });
 });
 
-// Order -- make a pending order
-router.put("/api/users/:id", (req, res) => {
-  // Set currencies involved in trade
-  const buy = `${req.body.buying}_balance`;
-  const sell = `${req.body.selling}_balance`;
-  User.findById(req.params.id).then(doc => {
-    if (doc[sell] < req.body.sellAmount) res.status(403).send({error: 'Insufficient funds'});
-    Trade.create({
-      "curr_bought": req.body.buying,
-      "curr_sold": req.body.selling,
-      "bought_amount": req.body.buyAmount,
-      "sold_amount": req.body.sellAmount,
-      "owner": req.params.id
-    }).then(trade => {
-      console.log(trade);
-      doc.update({
-        $set: {
-          [sell]: (doc[sell] - parseFloat(req.body.sellAmount)).toPrecision(8)
-        },
-        $push: {
-          "trades" : trade
-        }
-      }, {
-        runValidators: true
-      }, (err, doc) => {
-        if (err) {
-          trade.remove();
-        }
-        else return res.json(doc);
-      });
-    });
-  }).catch(err => res.status(403).send({error: 'Forbidden'}));
-});
-
 // Delete a user
 router.delete("/api/users/:id", (req, res) => {
   User.deleteOne({"_id": req.params.id}).then(dbUser => {

@@ -90,8 +90,42 @@ router.get("/api/trades", (req, res) => {
 });
 
 // Route for poll function, see above
-router.post("/api/trades", (req, res) => {
+router.put("/api/trades", (req, res) => {
   poll().catch(err => console.log(err));
+});
+
+// Order -- make a pending order
+router.post("/api/trades/:id", (req, res) => {
+  // Set currencies involved in trade
+  const buy = `${req.body.buying}_balance`;
+  const sell = `${req.body.selling}_balance`;
+  User.findById(req.params.id).then(doc => {
+    if (doc[sell] < req.body.sellAmount) res.status(403).send({error: 'Insufficient funds'});
+    Trade.create({
+      "curr_bought": req.body.buying,
+      "curr_sold": req.body.selling,
+      "bought_amount": req.body.buyAmount,
+      "sold_amount": req.body.sellAmount,
+      "owner": req.params.id
+    }).then(trade => {
+      console.log(trade);
+      doc.update({
+        $set: {
+          [sell]: (doc[sell] - parseFloat(req.body.sellAmount)).toPrecision(8)
+        },
+        $push: {
+          "trades" : trade
+        }
+      }, {
+        runValidators: true
+      }, (err, doc) => {
+        if (err) {
+          trade.remove();
+        }
+        else return res.json(doc);
+      });
+    });
+  }).catch(err => res.status(403).send({error: 'Forbidden'}));
 });
 
 // Delete a trade

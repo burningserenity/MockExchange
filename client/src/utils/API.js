@@ -6,7 +6,7 @@ export default {
   // Helper function to make an order
 
   placeOrder: function(id, buying, selling, buyAmount, sellAmount) {
-    return axios.put(`/api/users/${id}`, {
+    return axios.post(`/api/trades/${id}`, {
       buying: buying,
       selling: selling,
       buyAmount: buyAmount,
