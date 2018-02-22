@@ -161,4 +161,4 @@ router.delete("/api/trades/:id/:trade", (req, res) => {
   });
 });
 
-module.exports = router;
+module.exports = {router, poll, executeTrade};

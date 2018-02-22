@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT || 8080;
 const userRoutes = require('./routes/user_routes.js');
 const curRoutes = require('./routes/currency_routes.js');
-const tradeRoutes = require('./routes/trade_routes.js');
+const tradeRoutes = require('./routes/trade_routes.js').router;
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use("/", userRoutes, curRoutes, tradeRoutes);
