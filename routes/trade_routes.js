@@ -39,44 +39,47 @@ async function poll() {
     return index.data
   });
 
+  return pricesArr;
+}
+
+// If price match is found, execute trade
+function executeTrade(pricesArr) {
+  // currencies array must match up one-to-one with pricesArr array
+  const currencies = ['btc', 'ltc', 'eth', 'doge'];
+  let chosen;
+  // Pull trades from database
   Trade.find().then(dbTrades => {
+    // Get only open trades
     const openTrades = dbTrades.filter(trade => trade.open);
     openTrades.forEach(trade => {
-      // Single use case for buying USD with BTC
-      if (trade.curr_bought === 'usd' && trade.sold_amount >= (trade.bought_amount / pricesArr[0])) {
-        executeTrade(pricesArr, trade, 'usd');
-      }
-      // Else loop through currencies until match with trade is found
+      const balance = `${trade.curr_bought}_balance`;
+      // Get price to compare
+      if (trade.curr_bought === 'usd') chosen = pricesArr[0];
       else {
         for (let i = 0; i < currencies.length; i++) {
-          if (trade.curr_bought === currencies[i] && trade.sold_amount >= (pricesArr[i] * trade.bought_amount)) {
-            executeTrade(pricesArr, trade, currencies[i]);
+          if (trade.curr_bought === currencies[i]) {
+            chosen = pricesArr[i];
           }
         }
       }
+      // Do math depending on buying BTC with USD or something else
+      if ((trade.curr_bought === 'usd' && trade.sold_amount >= (trade.bought_amount / chosen)) || (trade.sold_amount >= chosen * trade.bought_amount)) {
+        // Close trade order
+        trade.update({$set: { "open": false }}).then(() => {
+
+          // Update user's balance to reflect successful trade
+          User.findOne({"_id": trade.owner}).then(user => {
+            user.update({
+              $set: {
+                [balance]: user[balance] + parseFloat(trade.bought_amount)
+              }
+            }).then(doc => {
+              res.json(doc);
+            }).catch(err => console.log(err));
+          }).catch(err => console.log(err));
+        });
+      }
     });
-  });
-};
-
-// If price match is found, execute trade
-function executeTrade(pricesArr, trade, currency) {
-  console.log(`${trade.owner} bought ${currency}`);
-  const balance = `${currency}_balance`;
-
-  // Close trade order
-  trade.update({$set: { "open": false }}).then(() => {
-
-    // Update user's balance to reflect successful trade
-    User.findOne({"_id": trade.owner}).then(user => {
-      console.log(`user[balance] === ${user[balance]}\ntrade.bought_amount === ${trade.bought_amount}\ntotal === ${user[balance] + parseFloat(trade.bought_amount)}`);
-      user.update({
-        $set: {
-          [balance]: user[balance] + parseFloat(trade.bought_amount)
-        }
-      }).then(() => {
-        console.log('traded')
-      }).catch(err => console.log(err));
-    }).catch(err => console.log(err));
   });
 };
 
@@ -91,7 +94,9 @@ router.get("/api/trades", (req, res) => {
 
 // Route for poll function, see above
 router.put("/api/trades", (req, res) => {
-  poll().catch(err => console.log(err));
+  poll()
+    .then(pricesArr => executeTrade(pricesArr))
+    .catch(err => console.log(err));
 });
 
 // Order -- make a pending order
