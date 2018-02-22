@@ -5,7 +5,7 @@ const chai = require("chai");
 const expect = chai.expect;
 
 // Model to test
-const Trade = require('../../models/Trade');
+const Trade = require('../../../models/Trade');
 const testTrade = new Trade;
 
 module.exports = () => {

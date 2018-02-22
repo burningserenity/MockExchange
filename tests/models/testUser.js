@@ -5,7 +5,7 @@ const chai = require("chai");
 const expect = chai.expect;
 
 // Model to test
-const User = require('../../../models/User');
+const User = require('../../models/User');
 const testUser = new User;
 
 module.exports = () => {
