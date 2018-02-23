@@ -8,7 +8,10 @@ const port = process.env.PORT || 8080;
 const app = request(`http://localhost:${port}`);
 
 const Trade = require('../../models/Trade');
+const poll = require('../../routes/trade_routes').poll;
+const executeTrade = require('../../routes/trade_routes').executeTrade;
 
+let pricesArr;
 let testTrade = new Trade({
   'curr_bought': 'btc',
   'curr_sold': 'usd',
@@ -30,24 +33,39 @@ describe('Trade Routes', () => {
       });
   });
 
+  it('Gets VWAPs for BTC, LTC, ETH, and DOGE', done => {
+    poll().then(prices => { 
+      pricesArr = prices;
+      expect(pricesArr).to.be.an('array').with.length(4);
+      for (let i = 0; i < pricesArr.length; i++) expect(parseFloat(pricesArr[i])).to.be.gt(-1);
+      done();
+    });
+  });
+
   it('Creates a trade', done => {
     app
-      .post(`/api/trades/${testTrade.owner}`)
-      .send({
-        buying: testTrade.curr_bought,
-        selling: testTrade.curr_sold,
-        buyAmount: testTrade.bought_amount,
-        sellAmount: testTrade.sold_amount,
-        owner: testTrade.owner
-      })
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(200)
+      .post(`/api/users/`)
+      .send({"user_name": "mochaChai"})
       .end((err, res) => {
-        expect(res.body.n).to.equal(1);
-        expect(res.body.nModified).to.equal(1);
-        expect(res.body.ok).to.equal(1);
-        done();
+        testTrade.owner = res.body._id;
+        app
+          .post(`/api/trades/${res.body._id}`)
+          .send({
+            buying: testTrade.curr_bought,
+            selling: testTrade.curr_sold,
+            buyAmount: testTrade.bought_amount,
+            sellAmount: testTrade.sold_amount,
+            owner: testTrade.owner
+          })
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            expect(res.body.n).to.equal(1);
+            expect(res.body.nModified).to.equal(1);
+            expect(res.body.ok).to.equal(1);
+            done();
+          });
       });
   });
 
@@ -63,9 +81,23 @@ describe('Trade Routes', () => {
         expect(res.body[0].curr_sold).to.equal('usd');
         expect(res.body[0].bought_amount).to.equal(1);
         expect(res.body[0].sold_amount).to.equal(1);
-        expect(res.body[0].owner[0]).to.equal('ffffffffffffffffffffffff');
+        expect(res.body[0].owner[0]).to.include(testTrade.owner);
         expect(res.body[0].open).to.be.true;
         testTrade._id = res.body[0]._id;
+        done();
+      });
+  });
+
+  it('Executes a trade', done => {
+    executeTrade([1,1,1,1]);
+    app
+      .get(`/api/trades/?_id=${testTrade._id}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        console.log(res.body);
+        expect(res.body.open).to.equal('false');
         done();
       });
   });
