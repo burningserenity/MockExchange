@@ -96,7 +96,7 @@ describe('Trade Routes', () => {
   });
 
   it('Does not execute a trade if the offered price is < the current VWAP', done => {
-    const exec = executeTrade([2,2,2,2]);
+    const exec = executeTrade([222222,222222,222222,222222]);
     exec.then(res => {
       expect(res).to.equal(0);
       done();
