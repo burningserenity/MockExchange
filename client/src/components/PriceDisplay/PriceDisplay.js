@@ -12,7 +12,7 @@ export const PriceDisplay = props =>
           <Row>
             <Col size="md-3">
               <h4>BTC/USD</h4>
-              <h5>{props.prices.btcTousd}</h5>
+              <h5>{parseFloat(props.prices.btcTousd).toFixed(2)}</h5>
             </Col>
             <Col size="md-3">
               <h4>LTC/BTC</h4>
