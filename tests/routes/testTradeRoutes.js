@@ -1,5 +1,12 @@
 'use strict'
 
+const mongoose = require("mongoose");
+mongoose.connect(`mongodb://localhost/exchange`, {useMongoClient: true});
+mongoose.Promise = Promise;
+mongoose.connection.on('error', (err) => {
+  console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
+});
+
 const chai = require("chai");
 const expect = chai.expect;
 
@@ -88,18 +95,22 @@ describe('Trade Routes', () => {
       });
   });
 
-  it('Executes a trade', done => {
-    executeTrade([1,1,1,1]);
-    app
-      .get(`/api/trades/?_id=${testTrade._id}`)
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        console.log(res.body);
-        expect(res.body.open).to.equal('false');
-        done();
-      });
+  it('Does not execute a trade if the offered price is < the current VWAP', done => {
+    const exec = executeTrade([2,2,2,2]);
+    exec.then(res => {
+      expect(res).to.equal(0);
+      done();
+    });
+  }); 
+
+  it('Executes a trade if the offered price is >= the current VWAP', done => {
+    const exec = executeTrade([1,1,1,1]);
+    exec.then(res => {
+      expect(res.n).to.equal(1);
+      expect(res.nModified).to.equal(1);
+      expect(res.ok).to.equal(1);
+      done();
+    })
   });
 
   it('Removes a trade', done => {
@@ -108,11 +119,21 @@ describe('Trade Routes', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200)
-      .end((err, res) => {
+      .end((error, res) => {
         expect(res.body.n).to.equal(1);
         expect(res.body.nModified).to.equal(1);
         expect(res.body.ok).to.equal(1);
-        done()
+        app
+          .delete(`/api/users/${testTrade.owner}`)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((error, res) => {
+            expect(res.body.n).to.equal(1);
+            expect(res.body.ok).to.equal(1);
+            mongoose.disconnect();
+            done();
+          });
       });
   });
 

@@ -47,42 +47,48 @@ function executeTrade(pricesArr) {
   // currencies array must match up one-to-one with pricesArr array
   const currencies = ['btc', 'ltc', 'eth', 'doge'];
   let chosen;
-  // Pull trades from database
-  Trade.find().then(dbTrades => {
-    // Get only open trades
-    const openTrades = dbTrades.filter(trade => trade.open);
-    openTrades.forEach(trade => {
-      const balance = `${trade.curr_bought}_balance`;
-      // Get price to compare
-      if (trade.curr_bought === 'usd') chosen = pricesArr[0];
-      else {
-        for (let i = 0; i < currencies.length; i++) {
-          if (trade.curr_bought === currencies[i]) {
-            chosen = pricesArr[i];
+  
+  return new Promise((resolve, reject) => {
+    Trade.find().then(dbTrades => {
+      // Get only open trades
+      const openTrades = dbTrades.filter(trade => trade.open);
+      openTrades.forEach((trade, i) => {
+        const balance = `${trade.curr_bought}_balance`;
+        // Get price to compare
+        if (trade.curr_bought === 'usd') {
+          chosen = pricesArr[0];
+        }
+        else {
+          for (let j = 0; j < currencies.length; j++) {
+            if (trade.curr_bought === currencies[j]) {
+              chosen = pricesArr[j];
+            }
           }
         }
-      }
-      // Do math depending on buying BTC with USD or something else
-      if ((trade.curr_bought === 'usd' && trade.sold_amount >= (trade.bought_amount / chosen)) || (trade.sold_amount >= chosen * trade.bought_amount)) {
-        // Close trade order
-        trade.update({$set: { "open": false }}).then(() => {
+        // Do math depending on buying BTC with USD or something else
+        if ((trade.curr_bought === 'usd' && trade.sold_amount >= (trade.bought_amount / chosen)) || (trade.sold_amount >= chosen * trade.bought_amount)) {
+          // Close trade order
+          trade.update({ $set: { "open": false } }).then(() => {
 
-          // Update user's balance to reflect successful trade
-          User.findOne({"_id": trade.owner}).then(user => {
-            user.update({
-              $set: {
-                [balance]: user[balance] + parseFloat(trade.bought_amount)
-              }
-            }).then(doc => {
-              res.json(doc);
+            // Update user's balance to reflect successful trade
+            User.findOne({ "_id": trade.owner }).then(user => {
+              user.update({
+                $set: {
+                  [balance]: user[balance] + parseFloat(trade.bought_amount)
+                }
+              }).then(doc => {
+                resolve(doc);
+              }).catch(err => console.log(err));
             }).catch(err => console.log(err));
-          }).catch(err => console.log(err));
-        });
-      }
+          });
+        }
+        else if (i === openTrades.length - 1) resolve(0);
+      });
     });
   });
+  // Pull trades from database
+  
 };
-
 /*  The routes  */
 
 // Find trades based on query parameters
