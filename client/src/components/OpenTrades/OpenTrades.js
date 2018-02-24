@@ -15,13 +15,13 @@ export const OpenTrades = props =>
             <Col size="md-6">
               <h5>Buying</h5>
               <h6>{order.curr_bought}</h6>
-              <h6>{order.bought_amount}</h6>
+              <h6>{(order.curr_bought === 'usd' ? parseFloat(order.bought_amount).toFixed(2) : order.bought_amount)}</h6>
               <br />
             </Col>
             <Col size="md-6">
               <h5>Selling</h5>
               <h6>{order.curr_sold}</h6>
-              <h6>{order.sold_amount}</h6>
+              <h6>{(order.curr_bought === 'usd' ? parseFloat(order.sold_amount).toFixed(2) : order.sold_amount)}</h6>
             </Col>
           </Row>
           <Row>
