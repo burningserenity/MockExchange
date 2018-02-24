@@ -55,18 +55,58 @@ function executeTrade(pricesArr) {
       openTrades.forEach((trade, i) => {
         const balance = `${trade.curr_bought}_balance`;
         // Get price to compare
-        if (trade.curr_bought === 'usd') {
+        if (trade.curr_bought === 'usd' || trade.curr_sold === 'usd') {
           chosen = pricesArr[0];
         }
-        else {
+        else if (trade.curr_sold === 'btc'){
           for (let j = 0; j < currencies.length; j++) {
             if (trade.curr_bought === currencies[j]) {
               chosen = pricesArr[j];
             }
           }
         }
+        else {
+          for (let j = 0; j < currencies.length; j++) {
+            if (trade.curr_sold === currencies[j]) {
+              chosen = pricesArr[j];
+            }
+          }
+        }
         // Do math depending on buying BTC with USD or something else
-        if ((trade.curr_bought === 'usd' && trade.sold_amount >= (trade.bought_amount / chosen)) || (trade.sold_amount >= chosen * trade.bought_amount)) {
+        if (trade.curr_bought === 'usd' && trade.sold_amount >= (trade.bought_amount / chosen) ) {
+          // Close trade order
+          trade.update({ $set: { "open": false } }).then(() => {
+
+            // Update user's balance to reflect successful trade
+            User.findOne({ "_id": trade.owner }).then(user => {
+              user.update({
+                $set: {
+                  [balance]: user[balance] + parseFloat(trade.bought_amount)
+                }
+              }).then(doc => {
+                resolve(doc);
+              }).catch(err => console.log(err));
+            }).catch(err => console.log(err));
+          });
+        }
+        else if (trade.curr_bought === 'btc' && trade.sold_amount >= trade.bought_amount / chosen) {
+          console.log(`\n\n\n${chosen}\n\n\n`)
+          // Close trade order
+          trade.update({ $set: { "open": false } }).then(() => {
+
+            // Update user's balance to reflect successful trade
+            User.findOne({ "_id": trade.owner }).then(user => {
+              user.update({
+                $set: {
+                  [balance]: user[balance] + parseFloat(trade.bought_amount)
+                }
+              }).then(doc => {
+                resolve(doc);
+              }).catch(err => console.log(err));
+            }).catch(err => console.log(err));
+          });
+        }
+        else if (trade.curr_bought !== 'btc' && trade.sold_amount >= chosen * trade.bought_amount) {
           // Close trade order
           trade.update({ $set: { "open": false } }).then(() => {
 
