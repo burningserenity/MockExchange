@@ -4,7 +4,8 @@
   "description": "A Mock Cryptocurrency exchange to use as a learning tool",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"nodemon ./server.js\" \"cd ./client && npm start\""
+    "dev": "concurrently \"nodemon ./server.js\" \"cd ./client && npm start\"",
+    "production": "node server.js"
   },
   "repository": {
     "type": "git",

@@ -90,8 +90,24 @@ function executeTrade(pricesArr) {
             }).catch(err => console.log(err));
           });
         }
-        else if (trade.curr_bought === 'btc' && trade.sold_amount >= trade.bought_amount / chosen) {
-          console.log(`\n\n\n${chosen}\n\n\n`)
+        else if (trade.curr_bought === 'btc' && trade.curr_sold !== 'usd' && trade.sold_amount >= trade.bought_amount / chosen) {
+          // Close trade order
+          trade.update({ $set: { "open": false } }).then(() => {
+
+            // Update user's balance to reflect successful trade
+            User.findOne({ "_id": trade.owner }).then(user => {
+              const newBalance = (user[balance] + trade.bought_amount).toFixed(8);
+              user.update({
+                $set: {
+                  [balance]: newBalance
+                }
+              }).then(doc => {
+                resolve(doc);
+              }).catch(err => console.log(err));
+            }).catch(err => console.log(err));
+          });
+        }
+        else if (trade.curr_bought === 'btc' && trade.curr_sold === 'usd' && trade.sold_amount >= trade.bought_amount * chosen) {
           // Close trade order
           trade.update({ $set: { "open": false } }).then(() => {
 
