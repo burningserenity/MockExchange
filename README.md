@@ -42,7 +42,7 @@ Next install the local npm packages. From the application's root directory:
 
 Start from the app's root directory with this command:
 
-  npm run-script dev
+  npm run dev
 
 After a moment the front and backend portions of the app will start.
 
@@ -72,13 +72,7 @@ There are three radio buttons which determine the altcoin to trade.
 The amount and offer inputs work similarly to the previous: amount means buy, offer means sell.
 The last two radio buttons work like the two for the previous form, and determine whether you are buying or selling the chosen altcoin.
 
-As of right now, these trades are executed and saved in the database instantly. 
-There is also no check on whether or not the prices you specify are acceptible; you can buy 1000000 BTC for .00001 USD, at this point.
-It is recommended that the user make their trades using a calculator and the current posted prices for the best learning experience.
-
-After the page refreshes from an order, you can view the trades posted under the heading "Open Trade Orders."
-You may notice the cancel button to the far right of each. 
-As of right now, this does nothing, but once pending trade functionality is implemented, it will allow you to cancel a trade before it's accepted.
+Trades are posted and can be canceled until they are executed. The balance of the currency you are offering will be debited. A trade is executed when the VWAP for that currency is less than or equal to the amount you are offering. When a trade is executed it will disappear from the screen and your balance for the currency you just bought will increase accordingly.
 
 Finally, if you were to go back to the log in page, you can log in using the name of the user you just created.
 For now you have to click the "Enter" button for this to work, rather than pressing the enter/return key.
