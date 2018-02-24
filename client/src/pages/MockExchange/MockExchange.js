@@ -31,9 +31,9 @@ class MockExchange extends Component {
     trades: []
   };
 BigNumber.config({
-  ROUNDING_MODE: 8,
+  ROUNDING_MODE: 4,
   EXPONENTIAL_AT: 20,
-  POW_PRECISION: 1e+9
+  POW_PRECISION: 1e+9,
 });
 }
 
@@ -56,7 +56,7 @@ BigNumber.config({
     let priceArr;
     promArr.then(res => {
       priceArr = res.map(index => {
-        return index.data
+        return index.data;
       });
       // Put Array in the state
       this.setState({

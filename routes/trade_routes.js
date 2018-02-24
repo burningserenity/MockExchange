@@ -79,9 +79,10 @@ function executeTrade(pricesArr) {
 
             // Update user's balance to reflect successful trade
             User.findOne({ "_id": trade.owner }).then(user => {
+              const newBalance = (user[balance] + trade.bought_amount).toFixed(2);
               user.update({
                 $set: {
-                  [balance]: user[balance] + parseFloat(trade.bought_amount)
+                  [balance]: newBalance
                 }
               }).then(doc => {
                 resolve(doc);
@@ -96,9 +97,10 @@ function executeTrade(pricesArr) {
 
             // Update user's balance to reflect successful trade
             User.findOne({ "_id": trade.owner }).then(user => {
+              const newBalance = (user[balance] + trade.bought_amount).toFixed(8);
               user.update({
                 $set: {
-                  [balance]: user[balance] + parseFloat(trade.bought_amount)
+                  [balance]: newBalance
                 }
               }).then(doc => {
                 resolve(doc);
@@ -106,15 +108,16 @@ function executeTrade(pricesArr) {
             }).catch(err => console.log(err));
           });
         }
-        else if (trade.curr_bought !== 'btc' && trade.sold_amount >= chosen * trade.bought_amount) {
+        else if (trade.curr_bought !== 'btc' && trade.curr_bought !== 'usd' && trade.sold_amount >= chosen * trade.bought_amount) {
           // Close trade order
           trade.update({ $set: { "open": false } }).then(() => {
 
             // Update user's balance to reflect successful trade
             User.findOne({ "_id": trade.owner }).then(user => {
+              const newBalance = (user[balance] + trade.bought_amount).toFixed(8);
               user.update({
                 $set: {
-                  [balance]: user[balance] + parseFloat(trade.bought_amount)
+                  [balance]: newBalance
                 }
               }).then(doc => {
                 resolve(doc);
