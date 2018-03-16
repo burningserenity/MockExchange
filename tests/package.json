@@ -4,7 +4,7 @@
   "description": "Unit and integration tests for MockExchange",
   "main": "testAll.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "concurrently \"mongod & nodemon ../server.js & mocha ./runTests.js\""
   },
   "author": "",
   "license": "ISC",
