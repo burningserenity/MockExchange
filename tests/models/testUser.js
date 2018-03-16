@@ -40,7 +40,8 @@ module.exports = () => {
         'doge_balance': -1
       });
       invalidUser.validate(err => {
-        userProps.forEach(prop => expect(err.errors[prop]).to.exist);
+        const balanceProps = userProps.slice(1, userProps.length - 1);
+        balanceProps.forEach(prop => expect(err.errors[prop]).to.exist);
       });
       done();
     });
@@ -48,8 +49,8 @@ module.exports = () => {
     it('Saves user with default balances', done => {
       const validUser = new User({'user_name': 'bar'});
       validUser.validate(err => {
-        expect(validUser.usd_balance.to.equal(100000.00));
-        expect(err.to.not.exist);
+        expect(validUser.usd_balance).to.equal(100000.00);
+        expect(err).to.not.exist;
       });
       done();
     });
