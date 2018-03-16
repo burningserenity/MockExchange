@@ -5,7 +5,7 @@ const chai = require("chai");
 const expect = chai.expect;
 
 // Model to test
-const Trade = require('../../../models/Trade');
+const Trade = require('../../models/Trade');
 const testTrade = new Trade;
 
 module.exports = () => {
@@ -56,7 +56,7 @@ module.exports = () => {
           'bought_amount': 1,
           'sold_amount': 1
         });  
-        validTrade.validate(err => expect(err.to.not.exist));
+        validTrade.validate(err => expect(err).to.not.exist);
       });
       currencies.forEach(currency => {
         const validTrade = new Trade({
@@ -65,7 +65,7 @@ module.exports = () => {
           'bought_amount': 1,
           'sold_amount': 1
         });  
-        validTrade.validate(err => expect(err.to.not.exist));
+        validTrade.validate(err => expect(err).to.not.exist);
       });
       done();
     });
