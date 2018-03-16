@@ -4,7 +4,7 @@
   "description": "Unit and integration tests for MockExchange",
   "main": "testAll.js",
   "scripts": {
-    "test": "concurrently \"mongod & nodemon ../server.js & mocha ./runTests.js\""
+    "test": "concurrently \"mongod --quiet > /dev/null & nodemon -q ../server.js > /dev/null & sleep 2 && mocha ./runTests.js && pkill node && pkill mongod\""
   },
   "author": "",
   "license": "ISC",
