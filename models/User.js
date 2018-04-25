@@ -55,8 +55,9 @@ const UserSchema = new Schema({
   trades: [{type: Schema.Types.ObjectId, ref: 'Trade'}]
 });
 
-UserSchema.pre('save', next => {
+UserSchema.pre('save', function(next) {
   const user = this;
+  console.log(JSON.stringify(user, null, 2));
   if (this.isModified('passphrase') || this.isNew) {
     bcrypt.genSalt(10, (err, salt) => {
       if (err) return next(err);
@@ -70,7 +71,7 @@ UserSchema.pre('save', next => {
   else return next();
 });
 
-UserSchema.methods.comparePassphrase = (passphrase, cb) => {
+UserSchema.methods.comparePassphrase = function(passphrase, cb) {
   bcrypt.compare(passphrase, this.passphrase, (err, isMatch) => {
     if (err) return cb(err);
     cb(null, isMatch);

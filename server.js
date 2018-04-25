@@ -2,11 +2,9 @@
 
 // Dependencies
 const express = require('express');
-const session = require("express-session");
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const axios = require('axios');
-const passport = require('passport');
 
 // Express configuration
 const app = express();
@@ -20,15 +18,10 @@ app.use(bodyParser.json());
 
 app.use(express.static("client/build"));
 
-app.use(session({ secret: "cats "}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use("/", userRoutes, curRoutes, tradeRoutes);
 
 // Mongoose configuration
-mongoose.connect(`mongodb://localhost/exchange`, {useMongoClient: true});
+mongoose.connect(`mongodb://localhost/exchange`, { useMongoClient: true });
 mongoose.Promise = Promise;
 mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);

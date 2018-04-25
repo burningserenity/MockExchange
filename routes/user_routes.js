@@ -2,12 +2,18 @@
 
 // CRUD Routes for users
 
+// Dependencies
 const express = require('express');
 const router = express.Router();
-const moment = require('moment');
+
 const passport = require('passport');
+const settings = require('../config/settings');
+require('../config/passport')(passport);
+
+const jwt = require('jsonwebtoken');
+
+// Model required
 const User = require('../models/User');
-const Trade = require('../models/Trade');
 
 // Cryptocurrency exchange API, requires fetch defined globally
 global.fetch = require('node-fetch');
@@ -53,7 +59,7 @@ router.post("/register", (req, res) => {
     newUser.save(err => {
       if (err) return res.json({
         success: false,
-        msg: 'Username already exists.'
+        msg: err
       });
       res.json({
         success: true,
