@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListGroupItem } from 'react-bootstrap';
-import { Input, Jumbotron, JumboBtn } from "../../components/Jumbotron/";
+import { JumboBtn } from "../../components/Jumbotron/";
 import { Col, Row, Container } from "../../components/Grid/";
 
 // Intended to show pending trades. As of right now, displays all trades for

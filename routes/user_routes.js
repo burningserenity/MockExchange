@@ -5,6 +5,7 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
+const passport = require('passport');
 const User = require('../models/User');
 const Trade = require('../models/Trade');
 
@@ -43,10 +44,55 @@ router.get("/api/users", (req, res) => {
 });
 
 // Add a user
-router.post("/api/users", (req, res) => {
-  User.create({"user_name": req.body.user_name}).then(dbUser => {
-    resolution(res, dbUser);
+router.post("/register", (req, res) => {
+  if (req.body.user_name.length && req.body.passphrase.length) {
+    const newUser = new User({
+      user_name: req.body.user_name,
+      passphrase: req.body.passphrase
+    });
+    newUser.save(err => {
+      if (err) return res.json({
+        success: false,
+        msg: 'Username already exists.'
+      });
+      res.json({
+        success: true,
+        msg: 'Successfully created new user.'
+      });
+    });
+  }
+  else res.json({
+    success: false,
+    msg: 'Missing info'
   });
+});
+
+// Log in user
+router.post('/login', (req, res) => {
+  if (req.body.user_name.length && req.body.passphrase.length) {
+    User.findOne({
+      user_name: req.body.user_name
+    }, (err, user) => {
+      if (err) throw err;
+      if (!user) res.status(401).send({
+        success: false,
+        msg: 'User not found.'
+      });
+      user.comparePassphrase(req.body.passphrase, (err, isMatch) => {
+        if (err) res.status(401).send({
+          success: false,
+          msg: 'Incorrect passphrase'
+        });
+        else if (isMatch) {
+          const token = jwt.sign(user.toJSON(), settings.secret)
+          res.json({
+            success: true,
+            token: `JWT ${token}`
+          });
+        }
+      });
+    });
+  }
 });
 
 // Delete a user

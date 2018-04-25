@@ -1,7 +1,8 @@
 'use strict'
 
 // Initialize Mongoose
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt-nodejs");
 const Schema = mongoose.Schema;
 mongoose.Promise = Promise;
 
@@ -16,6 +17,10 @@ const UserSchema = new Schema({
     trim: true,
     unique: true,
     dropDups: true
+  },
+  passphrase: {
+    type: String,
+    required: true
   },
   usd_balance: {
     type: Number,
@@ -49,5 +54,27 @@ const UserSchema = new Schema({
   },
   trades: [{type: Schema.Types.ObjectId, ref: 'Trade'}]
 });
+
+UserSchema.pre('save', next => {
+  const user = this;
+  if (this.isModified('passphrase') || this.isNew) {
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) return next(err);
+      bcrypt.hash(user.passphrase, salt, null, (err, hash) => {
+        if (err) return next(err);
+        user.passphrase = hash;
+        next();
+      });
+    });
+  }
+  else return next();
+});
+
+UserSchema.methods.comparePassphrase = (passphrase, cb) => {
+  bcrypt.compare(passphrase, this.passphrase, (err, isMatch) => {
+    if (err) return cb(err);
+    cb(null, isMatch);
+  });
+};
 
 module.exports = mongoose.model("User", UserSchema);

@@ -23,9 +23,6 @@ async function poll() {
   let prices = [];
   const rates = [{buy: 'btc',sell: 'usd'}, {buy: 'ltc',sell: 'btc'}, {buy: 'eth',sell: 'btc'}, {buy: 'doge',sell: 'btc'}];
 
-  // currencies array should match up 1:1 with prices
-  const currencies = ['btc', 'ltc', 'eth', 'doge'];
-
   rates.forEach(rate => {
     p = axios.request({
       url: `http://127.0.0.1:${port}/api/currencies/${rate.buy}/${rate.sell}`,
@@ -56,7 +53,8 @@ function executeTrade(pricesArr) {
         const balance = `${trade.curr_bought}_balance`;
         // Get price to compare
         if (trade.curr_bought === 'usd' || trade.curr_sold === 'usd') {
-          chosen = pricesArr[0];
+          if (trade.curr_sold === 'usd') chosen = pricesArr[0];
+          else chosen = 1 / pricesArr[0];
         }
         else if (trade.curr_sold === 'btc'){
           for (let j = 0; j < currencies.length; j++) {
@@ -68,12 +66,12 @@ function executeTrade(pricesArr) {
         else {
           for (let j = 0; j < currencies.length; j++) {
             if (trade.curr_sold === currencies[j]) {
-              chosen = pricesArr[j];
+              chosen = 1 / pricesArr[j];
             }
           }
         }
         // Do math depending on buying BTC with USD or something else
-        if (trade.curr_bought === 'usd' && trade.sold_amount >= (trade.bought_amount / chosen) ) {
+        if (trade.sold_amount >= (trade.bought_amount * chosen) ) {
           // Close trade order
           trade.update({ $set: { "open": false } }).then(() => {
 
@@ -86,67 +84,14 @@ function executeTrade(pricesArr) {
                 }
               }).then(doc => {
                 resolve(doc);
-              }).catch(err => console.log(err));
-            }).catch(err => console.log(err));
-          });
-        }
-        else if (trade.curr_bought === 'btc' && trade.curr_sold !== 'usd' && trade.sold_amount >= trade.bought_amount / chosen) {
-          // Close trade order
-          trade.update({ $set: { "open": false } }).then(() => {
-
-            // Update user's balance to reflect successful trade
-            User.findOne({ "_id": trade.owner }).then(user => {
-              const newBalance = (user[balance] + trade.bought_amount).toFixed(8);
-              user.update({
-                $set: {
-                  [balance]: newBalance
-                }
-              }).then(doc => {
-                resolve(doc);
-              }).catch(err => console.log(err));
-            }).catch(err => console.log(err));
-          });
-        }
-        else if (trade.curr_bought === 'btc' && trade.curr_sold === 'usd' && trade.sold_amount >= trade.bought_amount * chosen) {
-          // Close trade order
-          trade.update({ $set: { "open": false } }).then(() => {
-
-            // Update user's balance to reflect successful trade
-            User.findOne({ "_id": trade.owner }).then(user => {
-              const newBalance = (user[balance] + trade.bought_amount).toFixed(8);
-              user.update({
-                $set: {
-                  [balance]: newBalance
-                }
-              }).then(doc => {
-                resolve(doc);
-              }).catch(err => console.log(err));
-            }).catch(err => console.log(err));
-          });
-        }
-        else if (trade.curr_bought !== 'btc' && trade.curr_bought !== 'usd' && trade.sold_amount >= chosen * trade.bought_amount) {
-          // Close trade order
-          trade.update({ $set: { "open": false } }).then(() => {
-
-            // Update user's balance to reflect successful trade
-            User.findOne({ "_id": trade.owner }).then(user => {
-              const newBalance = (user[balance] + trade.bought_amount).toFixed(8);
-              user.update({
-                $set: {
-                  [balance]: newBalance
-                }
-              }).then(doc => {
-                resolve(doc);
-              }).catch(err => console.log(err));
-            }).catch(err => console.log(err));
+              }).catch(err => reject(err));
+            }).catch(err => reject(err));
           });
         }
         else if (i === openTrades.length - 1) resolve(0);
       });
     });
   });
-  // Pull trades from database
-  
 };
 /*  The routes  */
 

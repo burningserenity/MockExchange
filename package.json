@@ -26,12 +26,21 @@
   "homepage": "https://github.com/burningserenity/MockExchange#readme",
   "dependencies": {
     "axios": "^0.17.1",
+    "bcrypt-nodejs": "0.0.3",
     "bignumber.js": "^5.0.0",
     "cryptocompare": "^0.4.0",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "jsonwebtoken": "^8.2.1",
     "moment": "^2.20.1",
     "mongoose": "^4.13.10",
+    "morgan": "^1.9.0",
     "node-fetch": "^1.7.3",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "passport-oauth": "^1.0.0",
+    "passport-openid": "^0.4.0",
     "socket.io": "^2.0.4"
   }
 }
