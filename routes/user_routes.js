@@ -63,7 +63,9 @@ router.post("/register", (req, res) => {
       });
       res.json({
         success: true,
-        msg: 'Successfully created new user.'
+        msg: 'Successfully created new user.',
+        token: `JWT ${token}`,
+        _id: user._id
       });
     });
   }
@@ -93,7 +95,8 @@ router.post('/login', (req, res) => {
           const token = jwt.sign(user.toJSON(), settings.secret)
           res.json({
             success: true,
-            token: `JWT ${token}`
+            token: `JWT ${token}`,
+            _id: user._id
           });
         }
       });

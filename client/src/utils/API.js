@@ -37,6 +37,7 @@ export default {
   // Helper function to get user from Mongoose
 
   getUserData: async function(id) {
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
     const balances = await axios.get(`/api/users/?id=${id}`);
     return balances;
   }

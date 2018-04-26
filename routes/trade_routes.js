@@ -98,7 +98,8 @@ router.delete("/api/trades/:id/:trade", (req, res) => {
     }).then(dbTransaction => {
       resolution(res, dbTransaction);
     });
-    else return res.status(402).send({success: false, error: 'Unauthorized'});
-  });
+  }
+  else return res.status(402).send({success: false, error: 'Unauthorized'});
+});
 
-  module.exports = router;
+module.exports = router;

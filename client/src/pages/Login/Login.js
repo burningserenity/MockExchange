@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Input, Jumbotron, JumboBtn } from "../../components/Jumbotron";
+import { FormBtn, Input } from "../../components/Form/"
+import { Jumbotron } from "../../components/Jumbotron";
 import { Col, Row, Container } from "../../components/Grid/";
 import axios from 'axios';
 import Pages from "../../utils/Pages";
@@ -8,16 +9,25 @@ import Pages from "../../utils/Pages";
 
 class Login extends Component {
 
-  state = {user_name: ""};
+  state = {
+    user_name: "",
+    passphrase: ""
+  };
 
   // Mocks log in by getting user by name and returning the user's _id
 
   handleFormSubmit = e => {
     e.preventDefault();
-    if (this.state.user_name) {
+    if (this.state.user_name && this.state.passphrase) {
 
-      axios.get(`/api/users/?user_name=${this.state.user_name}`).then(res => window.location.href = `/exchange/${res.data._id}`)
-          .catch(err => console.log(err));
+      axios.post(`/login`, {
+        user_name: this.state.user_name, 
+        passphrase: this.state.passphrase
+      }).then(res => {
+        localStorage.setItem('jwtToken', res.data.token);
+        localStorage.setItem('_id', res.data._id);
+        window.location.href = `/exchange`;
+      }).catch(err => console.log(err));
     }
   };
 
@@ -30,16 +40,29 @@ class Login extends Component {
               <h1>Mock Exchange</h1>
               <Row>
                 <Col size="md-6 centered">
-                  <Input onChange={Pages.handleChange.bind(this)} id="user_name" name="user_name" placeholder="Enter Username" />
-                  <JumboBtn onClick={this.handleFormSubmit.bind(this)}>
-                    Enter
-                  </JumboBtn>
+                  <form>
+                    <Input 
+                      value={this.state.user_name}
+                      onChange={Pages.handleChange.bind(this)} 
+                      id="user_name" 
+                      name="user_name" 
+                      placeholder="username" 
+                    />
+                    <Input 
+                      value={this.state.passphrase}
+                      onChange={Pages.handleChange.bind(this)} 
+                      id="passphrase" 
+                      name="passphrase" 
+                      placeholder="passphrase" 
+                    />
+                    <FormBtn onSubmit={this.handleFormSubmit.bind(this)} onClick={this.handleFormSubmit.bind(this)} />
+                  </form>
                 </Col>
               </Row>
               <Row>
                 <Col size="md-6 centered">
                   <h4>Welcome to Mock Exchange!</h4>
-                  <p>Log in or register</p>
+                  <p>Login or register</p>
                   <a href="/registration" className="btn btn-sm btn-outline-success mr-3">Register</a>
                 </Col>
               </Row>

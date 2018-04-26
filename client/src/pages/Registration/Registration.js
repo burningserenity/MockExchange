@@ -22,8 +22,9 @@ class Registration extends Component {
         user_name: this.state.user_name,
         passphrase: this.state.passphrase
       }).then(res => {
-        console.log(JSON.stringify(res, null, 2));
-        window.location.href = `/exchange/${res.data._id}`
+        localStorage.setItem('jwtToken', res.data.token);
+        localStorage.setItem('_id', res.data._id);
+        window.location.href = `/exchange/`;
       }).catch(err => console.log(err));
     }
   };
