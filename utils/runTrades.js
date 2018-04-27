@@ -4,6 +4,9 @@ const axios = require('axios');
 
 const port = process.env.PORT || 8080;
 
+const Trade = require('../models/Trade');
+const User = require('../models/User');
+
 // If price match is found, execute trade
 const executeTrade = function(pricesArr) {
   // currencies array must match up one-to-one with pricesArr array
@@ -69,7 +72,7 @@ const poll = async function() {
     p = axios.request({
       url: `http://127.0.0.1:${port}/api/currencies/${rate.buy}/${rate.sell}`,
       timeout: 3000
-    }).catch(() => console.log(err));
+    }).catch(() => reject());
     prices.push(p);
   });
 

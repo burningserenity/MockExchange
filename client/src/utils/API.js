@@ -40,6 +40,12 @@ export default {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('jwtToken');
     const balances = await axios.get(`/api/users/?id=${id}`);
     return balances;
+  },
+
+  parseToken: function (token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse(window.atob(base64));
   }
 
 }

@@ -28,10 +28,13 @@ mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
 });
 
+const checkTrades = function() {
+  runTrades.poll().then(pricesArr => runTrades.executeTrade(pricesArr));
+}
 
 // Server connection
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
-  setInterval(runTrades.poll, 3000);
+  setInterval(checkTrades, 3000);
 });
 

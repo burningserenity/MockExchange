@@ -17,6 +17,7 @@ class MockExchange extends Component {
     super();
 
     this.state = {
+      token: API.parseToken(localStorage.getItem('jwtToken')),
       btcTousd: 0,
       ltcTobtc: 0,
       ethTobtc: 0,
@@ -45,6 +46,7 @@ class MockExchange extends Component {
     this.loadPrices();
     this.loadUserData();
     setInterval(this.loadPrices, 3000);
+    setInterval(() => { this.loadUserData(this.state.token._id)}, 3000);
     console.log(this.props);
   };
 
@@ -71,7 +73,7 @@ class MockExchange extends Component {
 
   loadUserData() {
     // Get promise from Mongoose
-    const dbUser = API.getUserData(localStorage.getItem('_id'));
+    const dbUser = API.getUserData(this.state.token._id);
 
     // Resolve logged in user's currency balances to the state
     dbUser.then(res => {
@@ -96,13 +98,13 @@ class MockExchange extends Component {
 
   cancelOrder = (owner, trade) => {
     API.cancelOrder(owner, trade).then(() => {
-      this.loadUserData(localStorage.getItem('_id'));
+      this.loadUserData(this.state.token._id);
     });
   };
 
   placeOrder = (owner, buying, selling, buyAmount, sellAmount) => {
     API.placeOrder(owner, buying, selling, buyAmount, sellAmount).then(() => {
-      this.loadUserData(localStorage.getItem('_id'));
+      this.loadUserData(this.state.token._id);
     })
   };
 
@@ -119,7 +121,7 @@ render() {
       </Row>
       <Row>
         <h1>Place an order</h1>
-        <PlaceOrder match={this.props.match} placeOrder={this.placeOrder} />
+        <PlaceOrder match={this.state.token._id} placeOrder={this.placeOrder} />
       </Row>
       <Row>
         <h1>Open Trade Orders</h1>

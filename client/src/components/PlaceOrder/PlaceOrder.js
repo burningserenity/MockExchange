@@ -40,7 +40,7 @@ class PlaceOrder extends Component {
           const val2 = this.orderValidation(this.state.sellCurrency, this.state.offer);
           console.log(`buying ${this.state.amount} btc, selling ${this.state.offer} ${this.state.sellCurrency}\nval1 = ${val1}\nval2 = ${val2}`)
           if (val1 != null && val2 != null)
-            this.props.placeOrder(localStorage.getItem('_id'), this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
+            this.props.placeOrder(this.props.match, this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
         });
       }
 
@@ -53,7 +53,7 @@ class PlaceOrder extends Component {
           const val2 = this.orderValidation(this.state.sellCurrency, this.state.offer);
           console.log(`selling ${this.state.offer} btc, buying ${this.state.amount} ${this.state.buyCurrency}\nval1 = ${val1}\nval2 = ${val2}`)
           if (val1 != null && val2 != null)
-            this.props.placeOrder(localStorage.getItem('_id'), this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
+            this.props.placeOrder(this.props.match, this.state.buyCurrency, this.state.sellCurrency, this.state.amount, this.state.offer);
         });
       }
     };
@@ -67,7 +67,7 @@ class PlaceOrder extends Component {
           const val1 = this.orderValidation(this.state.buyCurrency, this.state.usdAmount);
           const val2 = this.orderValidation(this.state.sellCurrency, this.state.usdOffer);
           if (val1 != null && val2 != null)
-            this.props.placeOrder(localStorage.getItem('_id'), this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
+            this.props.placeOrder(this.props.match, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
         });
       }
 
@@ -76,7 +76,7 @@ class PlaceOrder extends Component {
           const val1 = this.orderValidation(this.state.buyCurrency, this.state.usdAmount);
           const val2 = this.orderValidation(this.state.sellCurrency, this.state.usdOffer);
           if (val1 != null && val2 != null)
-            this.props.placeOrder(localStorage.getItem('_id'), this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
+            this.props.placeOrder(this.props.match, this.state.buyCurrency, this.state.sellCurrency, this.state.usdAmount, this.state.usdOffer); 
         });
       }
     };
