@@ -4,6 +4,7 @@ import API from "../../utils/API";
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { BigNumber } from 'bignumber.js';
+import { Menu } from "../../components/Menu/Menu"
 import { PriceDisplay } from "../../components/PriceDisplay/PriceDisplay";
 import { BalanceDisplay } from "../../components/BalanceDisplay/BalanceDisplay";
 import { OpenTrades } from "../../components/OpenTrades/OpenTrades";
@@ -108,9 +109,15 @@ class MockExchange extends Component {
     })
   };
 
+  logOut = () => {
+    localStorage.removeItem('jwtToken');
+    window.location.href = '/';
+  };
+
 render() {
   return (
     <Container>
+      <Menu menuItem='Logout' onClick={this.logOut}/>
       <Row>
         <h1>Current Prices</h1>
         <PriceDisplay prices={this.state} />

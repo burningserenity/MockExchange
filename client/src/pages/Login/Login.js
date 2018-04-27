@@ -53,6 +53,7 @@ class Login extends Component {
                       id="passphrase" 
                       name="passphrase" 
                       placeholder="passphrase" 
+                      type="password"
                     />
                     <FormBtn onSubmit={this.handleFormSubmit.bind(this)} onClick={this.handleFormSubmit.bind(this)} />
                   </form>

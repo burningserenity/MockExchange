@@ -10,20 +10,21 @@ import Pages from "../../utils/Pages";
 class Registration extends Component {
   state = {
     user_name: "",
-    passphrase: ""
+    passphrase: "",
+    repeatPass: ""
   };
 
   // Handles user creation and redirects the new user to the main page
 
   handleFormSubmit = e => {
     e.preventDefault();
-    if (this.state.user_name && this.state.passphrase) {
+    if (this.state.user_name && this.state.passphrase && (this.state.passphrase === this.state.repeatPass)) {
       axios.post('/register', {
         user_name: this.state.user_name,
         passphrase: this.state.passphrase
       }).then(res => {
         localStorage.setItem('jwtToken', res.data.token);
-        window.location.href = `/exchange/`;
+        window.location.href = `/exchange`;
       }).catch(err => console.log(err));
     }
   };
@@ -56,6 +57,15 @@ class Registration extends Component {
                       onChange={Pages.handleChange.bind(this)}
                       id="passphrase"
                       name="passphrase"
+                      type="password"
+                    />
+                    <Input
+                      value={this.state.repeatPass}
+                      placeholder="repeat passphrase"
+                      onChange={Pages.handleChange.bind(this)}
+                      id="repeatPass"
+                      name="repeatPass"
+                      type="password"
                     />
                   </Col>
                 </Row>

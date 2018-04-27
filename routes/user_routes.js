@@ -61,11 +61,11 @@ router.post("/register", (req, res) => {
         success: false,
         msg: err
       });
+      const token = jwt.sign(newUser.toJSON(), settings.secret)
       res.json({
         success: true,
         msg: 'Successfully created new user.',
-        token: `JWT ${token}`,
-        _id: user._id
+        token: `JWT ${token}`
       });
     });
   }
@@ -95,8 +95,7 @@ router.post('/login', (req, res) => {
           const token = jwt.sign(user.toJSON(), settings.secret)
           res.json({
             success: true,
-            token: `JWT ${token}`,
-            _id: user._id
+            token: `JWT ${token}`
           });
         }
       });

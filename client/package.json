@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "bignumber.js": "^6.0.0",
+    "purecss": "^1.0.0",
     "react": "^16.2.0",
     "react-bootstrap": "^0.32.0",
     "react-dom": "^16.2.0",
