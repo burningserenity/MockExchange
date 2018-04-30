@@ -5,6 +5,7 @@ import './App.css';
 import MockExchange from "./pages/MockExchange/MockExchange";
 import Login from "./pages/Login/Login";
 import Registration from "./pages/Registration/Registration";
+import Error from "./pages/Error/Error";
 
 class App extends Component {
   constructor() {
@@ -37,6 +38,7 @@ class App extends Component {
             <Redirect from="/login" to='/' />
             <Route exact path="/registration" component={Registration} />
             <Redirect from="/register" to='/registration' />
+            <Route exact path="/error" component={Error} />
             <Redirect from="*" to='/exchange' />
           </Switch>
         </BrowserRouter>

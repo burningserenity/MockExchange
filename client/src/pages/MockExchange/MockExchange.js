@@ -119,7 +119,7 @@ class MockExchange extends Component {
 
 render() {
     
-  if (!localStorage.getItem('jwtToken')) return ( <Redirect to='/' /> );
+  if (!localStorage.getItem('jwtToken')) return ( <Redirect to='/error' /> );
 
   return (
     <Container>

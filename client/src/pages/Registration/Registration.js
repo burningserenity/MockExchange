@@ -32,7 +32,7 @@ class Registration extends Component {
 
   render() {
 
-    if (localStorage.getItem('jwtToken')) return ( <Redirect to='/exchange' /> );
+    if (localStorage.getItem('jwtToken')) return ( <Redirect to='/error' /> );
 
     return(
       <Container fluid>

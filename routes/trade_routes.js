@@ -70,7 +70,10 @@ router.post("/api/trades/:id", passport.authenticate('jwt', {session: false}), (
 });
 
 // Delete a trade
-router.delete("/api/trades/:id/:trade", (req, res) => {
+router.delete("/api/trades/:id/:trade", passport.authenticate('jwt', {
+session: false,
+failureRedirect: `https://localhost:3000/error`
+}), (req, res) => {
   const token = getToken(req.headers);
 
   if (token) {

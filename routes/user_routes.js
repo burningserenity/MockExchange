@@ -11,6 +11,7 @@ const settings = require('../config/settings');
 require('../config/passport')(passport);
 
 const jwt = require('jsonwebtoken');
+const getToken = require('../utils/getToken');
 
 // Model required
 const User = require('../models/User');
@@ -25,28 +26,27 @@ const resolution = function (res, object) {
   res.json(object);
 }
 
-// Get one or all registered users by query
-router.get("/api/users", (req, res) => {
-  // By _id
-  if (req.query.id) {
-    User.findOne({"_id": req.query.id}).populate('trades').then(dbUser => {
-      resolution(res, dbUser);
-    });
+// Get registered users by id
+router.get("/api/users", passport.authenticate('jwt', {session: false}), (req, res) => {
+  const token = jwt.decode(getToken(req.headers), 'json');
+
+  if (token && token._id) {
+
+    if (req.query.id === token._id) {
+      User.findOne({"_id": req.query.id}).populate('trades').then(dbUser => {
+        resolution(res, dbUser);
+      });
+    }
+
+    else {
+      res.status(400).send({
+        success: false,
+        msg: 'No query specified'
+      })
+    }
   }
 
-  // By user_name
-  else if (req.query.user_name) {
-    User.findOne({"user_name": req.query.user_name}).then(dbUser => {
-      resolution(res, dbUser);
-    });
-  }
-
-  // Get all users
-  else {
-    User.find().then(dbUser => {
-      resolution(res, dbUser);
-    });
-  }
+  else return res.status(402).send({success: false, error: 'Unauthorized'});
 });
 
 // Add a user
