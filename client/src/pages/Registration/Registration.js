@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Jumbotron } from "../../components/Jumbotron/";
 import { FormBtn, Input } from "../../components/Form/"
 import { Col, Row, Container } from "../../components/Grid/";
@@ -30,6 +31,9 @@ class Registration extends Component {
   };
 
   render() {
+
+    if (localStorage.getItem('jwtToken')) return ( <Redirect to='/exchange' /> );
+
     return(
       <Container fluid>
         <Row>

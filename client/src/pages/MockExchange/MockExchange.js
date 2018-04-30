@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Col, Row, Container } from "../../components/Grid/";
 import API from "../../utils/API";
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
@@ -44,11 +45,13 @@ class MockExchange extends Component {
   // Reloads the prices every three seconds.
 
   componentDidMount() {
+    if (this.state.token._id) {
     this.loadPrices();
     this.loadUserData();
     setInterval(this.loadPrices, 3000);
     setInterval(() => { this.loadUserData(this.state.token._id)}, 3000);
     console.log(this.props);
+    }
   };
 
 
@@ -115,6 +118,9 @@ class MockExchange extends Component {
   };
 
 render() {
+    
+  if (!localStorage.getItem('jwtToken')) return ( <Redirect to='/' /> );
+
   return (
     <Container>
       <Menu menuItem='Logout' onClick={this.logOut}/>

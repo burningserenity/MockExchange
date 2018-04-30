@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import logo from './logo.svg';
 import './App.css';
 import MockExchange from "./pages/MockExchange/MockExchange";
@@ -19,11 +19,12 @@ class App extends Component {
       doge_balance: 0,
       trades: []
     }
-  }
+  };
 
   test() {
     console.log(this.props);
-  }
+  };
+
 
   render() {
     return (
@@ -31,9 +32,10 @@ class App extends Component {
         <h1>Hello</h1>
         <BrowserRouter>
           <Switch>
-            <Route exact path="/exchange/:id?" component={MockExchange} />
+            <Route exact path="/exchange" component={MockExchange} />
             <Route exact path="/" component={Login} />
             <Route exact path="/registration" component={Registration} />
+            <Redirect from="*" to='/exchange' />
           </Switch>
         </BrowserRouter>
       </div>
