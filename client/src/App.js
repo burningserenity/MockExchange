@@ -34,7 +34,9 @@ class App extends Component {
           <Switch>
             <Route exact path="/exchange" component={MockExchange} />
             <Route exact path="/" component={Login} />
+            <Redirect from="/login" to='/' />
             <Route exact path="/registration" component={Registration} />
+            <Redirect from="/register" to='/registration' />
             <Redirect from="*" to='/exchange' />
           </Switch>
         </BrowserRouter>
