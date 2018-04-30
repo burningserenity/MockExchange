@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 require('../config/passport');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Trade = require('../models/Trade');
 const port = process.env.PORT || 8080;
@@ -26,9 +27,9 @@ const getToken = require('../utils/getToken');
 
 // Order -- make a pending order
 router.post("/api/trades/:id", passport.authenticate('jwt', {session: false}), (req, res) => {
-  const token = getToken(req.headers);
+  const token = jwt.decode(getToken(req.headers), 'json');
   // Set currencies involved in trade
-  if (token) {
+  if (token && token._id === req.params.id) {
     const buy = `${req.body.buying}_balance`;
     const sell = `${req.body.selling}_balance`;
     User.findById(req.params.id).then(doc => {
@@ -64,12 +65,12 @@ router.post("/api/trades/:id", passport.authenticate('jwt', {session: false}), (
 
 // Delete a trade
 router.delete("/api/trades/:id/:trade", passport.authenticate('jwt', {
-session: false,
-failureRedirect: `https://localhost:3000/error`
+  session: false,
+  failureRedirect: `https://localhost:3000/error`
 }), (req, res) => {
-  const token = getToken(req.headers);
+  const token = jwt.decode(getToken(req.headers), 'json');
 
-  if (token) {
+  if (token && token._id === req.params.id) {
     // Delete from Trade collection
     Trade.findOneAndRemove({"_id": req.params.trade}).then(dbTrade => {
       const curr_bought = `${dbTrade.curr_bought}_balance`;
