@@ -24,13 +24,6 @@ const getToken = require('../utils/getToken');
 
 /*  The routes  */
 
-// Find trades based on query parameters
-router.get("/api/trades", (req, res) => {
-  Trade.find(req.query).then(dbTrade => {
-    resolution(res, dbTrade);
-  });
-});
-
 // Order -- make a pending order
 router.post("/api/trades/:id", passport.authenticate('jwt', {session: false}), (req, res) => {
   const token = getToken(req.headers);

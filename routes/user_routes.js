@@ -104,10 +104,16 @@ router.post('/login', (req, res) => {
 });
 
 // Delete a user
-router.delete("/api/users/:id", (req, res) => {
-  User.deleteOne({"_id": req.params.id}).then(dbUser => {
-    resolution(res, dbUser);
-  });
+router.delete("/api/users/:id", passport.authenticate('jwt', {session: false}), (req, res) => {
+  const token = jwt.decode(getToken(req.headers), 'json');
+
+  if (token && token._id) {
+    User.deleteOne({"_id": req.params.id}).then(dbUser => {
+      resolution(res, dbUser);
+    });
+  }
+
+  else return res.status(402).send({success: false, error: 'Unauthorized'});
 });
 
 module.exports = router;
