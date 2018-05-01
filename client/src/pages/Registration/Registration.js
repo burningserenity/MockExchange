@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Jumbotron } from "../../components/Jumbotron/";
 import { FormBtn, Input } from "../../components/Form/"
-import { Link } from 'react-router-dom';
 import { Col, Row, Container } from "../../components/Grid/";
 import axios from 'axios';
 import Pages from "../../utils/Pages";
@@ -9,41 +9,74 @@ import Pages from "../../utils/Pages";
 // Create new user
 
 class Registration extends Component {
-  state = {user_name: ""};
+  state = {
+    user_name: "",
+    passphrase: "",
+    repeatPass: ""
+  };
 
   // Handles user creation and redirects the new user to the main page
 
   handleFormSubmit = e => {
     e.preventDefault();
-    if (this.state.user_name) {
-      console.log(this.state.user_name);
-      axios.post('/api/users', {user_name: this.state.user_name}).then(res => {
-        window.location.href = `/exchange/${res.data._id}`
+    if (this.state.user_name && this.state.passphrase && (this.state.passphrase === this.state.repeatPass)) {
+      axios.post('/register', {
+        user_name: this.state.user_name,
+        passphrase: this.state.passphrase
+      }).then(res => {
+        localStorage.setItem('jwtToken', res.data.token);
+        window.location.href = `/exchange`;
       }).catch(err => console.log(err));
     }
   };
 
   render() {
+
+    if (localStorage.getItem('jwtToken')) return ( <Redirect to='/error' /> );
+
     return(
       <Container fluid>
         <Row>
           <Col size="md-12">
             <Jumbotron>
               <h1>Please enter your name</h1>
-            </Jumbotron>
 
-            <Col size="md-8 centered">
               <form align="center">
-                <Input 
-                  value={this.state.user_name}
-                  onChange={Pages.handleChange.bind(this)}
-                  id="user_name"
-                  name="user_name"
-                />
+                <Row>
+                  <Col size="md-12">
+                    <Input
+                      value={this.state.user_name}
+                      placeholder="username"
+                      onChange={Pages.handleChange.bind(this)}
+                      id="user_name"
+                      name="user_name"
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col size="md-12">
+                    <Input
+                      value={this.state.passphrase}
+                      placeholder="passphrase"
+                      onChange={Pages.handleChange.bind(this)}
+                      id="passphrase"
+                      name="passphrase"
+                      type="password"
+                    />
+                    <Input
+                      value={this.state.repeatPass}
+                      placeholder="repeat passphrase"
+                      onChange={Pages.handleChange.bind(this)}
+                      id="repeatPass"
+                      name="repeatPass"
+                      type="password"
+                    />
+                  </Col>
+                </Row>
 
-              <FormBtn onClick={this.handleFormSubmit.bind(this)} />
+                <FormBtn onSubmit={this.handleFormSubmit.bind(this)} onClick={this.handleFormSubmit.bind(this)} />
               </form>
-            </Col>
+            </Jumbotron>
           </Col>
         </Row>
       </Container>
