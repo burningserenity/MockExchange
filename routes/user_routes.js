@@ -17,7 +17,7 @@ const getToken = require('../utils/getToken');
 const User = require('../models/User');
 
 // Cryptocurrency exchange API, requires fetch defined globally
-global.fetch = require('node-fetch');
+global.fetch = import('node-fetch');
 const cc = require('cryptocompare');
 
 // I like to see what's happening in the node console
@@ -29,6 +29,7 @@ const resolution = function (res, object) {
 // Get registered users by id
 router.get("/api/users", passport.authenticate('jwt', {session: false}), (req, res) => {
   const token = jwt.decode(getToken(req.headers), 'json');
+  console.log(req.headers)
 
   if (token && token._id) {
 

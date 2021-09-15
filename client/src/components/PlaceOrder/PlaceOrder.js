@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ListGroup, Radio } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { Col, Row, Container } from "../../components/Grid/";
 import { FormBtn, Input } from "../../components/Form/";
 import API from "../../utils/API";
@@ -63,6 +63,7 @@ class PlaceOrder extends Component {
 
     usdOrder = props => {
       if (this.state.buyCurrency === 'btc') {
+        console.log("hello")
         this.setState({sellCurrency: 'usd'}, () => { 
           const val1 = this.orderValidation(this.state.buyCurrency, this.state.usdAmount);
           const val2 = this.orderValidation(this.state.sellCurrency, this.state.usdOffer);
@@ -91,21 +92,25 @@ class PlaceOrder extends Component {
               <Input onChange={Pages.handleChange.bind(this)} id="usdAmount" name="buy_btc" />
               <h5>Offer</h5>
               <Input onChange={Pages.handleChange.bind(this)} id="usdOffer" name="buy_btc" />
-              <ListGroup>
-                <Radio name="CUR" onChange={Pages.handleChange.bind(this)} id="buyCurrency" value="btc">Buy BTC with USD</Radio>
-                <Radio name="CUR" onChange={Pages.handleChange.bind(this)} id="buyCurrency" value="usd">Sell BTC for USD</Radio>
-              </ListGroup>
-              <FormBtn onClick={() => this.usdOrder()}/>
+              <Form>
+                <Form.Check name="CUR" type="radio" onChange={Pages.handleChange.bind(this)} id="buyCurrency" label="Buy BTC with USD" value="btc"
+                />
+                <Form.Check name="CUR" type="radio" onChange={Pages.handleChange.bind(this)} id="buyCurrency" value="usd" label="Sell BTC for USD"
+                />
+              <FormBtn type="button" onClick={() => this.usdOrder()}/>
+              </Form>
             </Col>
           </Row>
           <Row>
             <Col size="md-3">
               <h4>Trade Crypto</h4>
-              <ListGroup>
-                <Radio name="CUR" onChange={Pages.handleChange.bind(this)} id="currency" value="ltc">LTC</Radio>
-                <Radio name="CUR" onChange={Pages.handleChange.bind(this)} id="currency" value="eth">ETH</Radio>
-                <Radio name="CUR" onChange={Pages.handleChange.bind(this)} id="currency" value="doge">DOGE</Radio>
-              </ListGroup>
+              <Form>
+                <Form.Check name="CUR" type="radio" onChange={Pages.handleChange.bind(this)} id="currency" value="ltc" label="LTC" 
+                />
+                <Form.Check name="CUR" type="radio" onChange={Pages.handleChange.bind(this)} id="currency" value="eth" label="ETH"
+                />
+                <Form.Check name="CUR" type="radio" onChange={Pages.handleChange.bind(this)} id="currency" value="doge" label="DOGE" />
+              </Form>
             </Col>
             <Col size="md-3">
               <h5>Amount</h5>
@@ -124,10 +129,12 @@ class PlaceOrder extends Component {
         />
       </Col>
       <Col size="md-3">
-        <ListGroup>
-          <Radio name="BuySell" onChange={Pages.handleChange.bind(this)} id="selling" value={0===1}>Buy with BTC</Radio>
-          <Radio name="BuySell" onChange={Pages.handleChange.bind(this)} id="selling" value={0===0}>Sell for BTC</Radio>
-        </ListGroup>
+        <Form>
+          <Form.Check name="BuySell" onChange={Pages.handleChange.bind(this)} id="selling" value={0===1} type="radio" label="Buy with BTC" 
+          />
+          <Form.Check name="BuySell" onChange={Pages.handleChange.bind(this)} id="selling" value={0===0} type="radio" label="Sell for BTC" 
+          />
+        </Form>
         <FormBtn onClick={() => this.cryptoOnlyOrder()}/>
       </Col>
     </Row>

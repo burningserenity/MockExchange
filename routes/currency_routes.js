@@ -6,8 +6,9 @@ const express = require('express');
 const router = express.Router();
 
 // Cryptocurrency exchange API, requires fetch defined globally
-global.fetch = require('node-fetch');
+global.fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cc = require('cryptocompare');
+cc.setApiKey(process.env.CCAPIKEY)
 
 // For dealing with decimals outside Node's precision capabilities
 // As of 4-25-18, this is for making the DOGE/BTC conversion rate readable
@@ -19,7 +20,7 @@ BigNumber.config({
 });
 
 router.get('/api/currencies/:buy/:sell', (req, res) => {
-  cc.generateAvg(req.params.buy.toUpperCase(), req.params.sell.toUpperCase(), ['HitBTC', 'Bittrex', 'YoBit']).then(data => {
+  cc.generateAvg(req.params.buy.toUpperCase(), req.params.sell.toUpperCase(), ['Coinbase', 'Kraken', 'Bitstamp', 'Bitfinex']).then(data => {
     const vwap = new BigNumber(data.PRICE);
     const adjusted = vwap.toString();
     res.json(adjusted);

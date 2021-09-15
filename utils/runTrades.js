@@ -72,7 +72,7 @@ const poll = async function() {
     p = axios.request({
       url: `http://127.0.0.1:${port}/api/currencies/${rate.buy}/${rate.sell}`,
       timeout: 3000
-    }).catch(() => reject());
+    }).catch(err => console.error("err"));
     prices.push(p);
   });
 

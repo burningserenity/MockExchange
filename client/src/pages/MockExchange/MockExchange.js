@@ -48,8 +48,8 @@ class MockExchange extends Component {
     if (this.state.token._id) {
     this.loadPrices();
     this.loadUserData();
-    setInterval(this.loadPrices, 3000);
-    setInterval(() => { this.loadUserData(this.state.token._id)}, 3000);
+    setInterval(this.loadPrices, 30000);
+    setInterval(() => { this.loadUserData(this.state.token._id)}, 30000);
     console.log(this.props);
     }
   };

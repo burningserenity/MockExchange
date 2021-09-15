@@ -22,7 +22,7 @@ app.use(express.static("client/build"));
 app.use("/", userRoutes, curRoutes, tradeRoutes);
 
 // Mongoose configuration
-mongoose.connect(`mongodb://localhost/exchange`, { useMongoClient: true });
+mongoose.connect(`mongodb://localhost/exchange`);
 mongoose.Promise = Promise;
 mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
@@ -35,6 +35,6 @@ const checkTrades = function() {
 // Server connection
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
-  setInterval(checkTrades, 3000);
+  setInterval(checkTrades, 30000);
 });
 

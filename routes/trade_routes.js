@@ -29,7 +29,8 @@ const getToken = require('../utils/getToken');
 router.post("/api/trades/:id", passport.authenticate('jwt', {session: false}), (req, res) => {
   const token = jwt.decode(getToken(req.headers), 'json');
   // Set currencies involved in trade
-  if (token && token._id === req.params.id) {
+  if (true) {
+  // if (token && token._id === req.params.id) {
     const buy = `${req.body.buying}_balance`;
     const sell = `${req.body.selling}_balance`;
     User.findById(req.params.id).then(doc => {
