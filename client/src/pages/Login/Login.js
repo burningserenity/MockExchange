@@ -26,7 +26,6 @@ class Login extends Component {
         passphrase: this.state.passphrase
       }).then(res => {
         localStorage.setItem('jwtToken', res.data.token);
-        console.log(res.data.token)
         window.location.href = `/exchange`;
       }).catch(err => console.log(err));
     }
